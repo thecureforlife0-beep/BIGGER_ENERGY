@@ -142,11 +142,10 @@ export const AntechamberModal = ({
               <div
                 className="aspect-[16/7] bg-cover bg-center"
                 style={{
-                  backgroundImage:
-                    "url('https://sc04.alicdn.com/kf/S2391668237824498831703e44d4821b0X.jpg')",
+                  backgroundImage: "url('/images/hero-sunset.jpg')",
                 }}
                 role="img"
-                aria-label="Chad Kermit character sheet"
+                aria-label="Bigger Energy Masterclass"
               />
               <div className="grid gap-4 px-5 py-5 sm:grid-cols-3 sm:px-6">
                 <div>
