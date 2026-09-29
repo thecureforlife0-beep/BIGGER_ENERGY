@@ -27,7 +27,8 @@ export const storefrontContent = {
       'Instant private email delivery via encrypted token',
       'Permanent lifetime access · Zero recurring charges',
     ],
-    teaserVideoUrl: 'https://www.dailymotion.com/embed/video/k5h8UClWDwJi8tEegYu',
+    teaserVideoUrl:
+      'https://player.mux.com/rR8P8mSaKDzz02TsftugTUdI00cQPJX00oy?metadata-video-title=Bigger+Energy+Teaser&video-title=Bigger+Energy+Teaser',
     teaserThumbnailUrl: '/images/teaser-thumbnail.png',
     heroImageSunset: '/images/hero-sunset.jpg',
     heroImageDaylight: '/images/hero-daylight.jpg',

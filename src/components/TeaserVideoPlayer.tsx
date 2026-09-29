@@ -34,7 +34,11 @@ export function TeaserVideoPlayer({ onUnlockClick }: TeaserVideoPlayerProps) {
       <div className="relative aspect-video w-full overflow-hidden bg-black">
         {isPlaying ? (
           <iframe
-            src={`${storefrontContent.course.teaserVideoUrl}?autoplay=1&mute=0`}
+            src={
+              storefrontContent.course.teaserVideoUrl.includes('?')
+                ? `${storefrontContent.course.teaserVideoUrl}&autoplay=1`
+                : `${storefrontContent.course.teaserVideoUrl}?autoplay=1`
+            }
             title="Bigger Energy Teaser Preview"
             className="h-full w-full border-0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
