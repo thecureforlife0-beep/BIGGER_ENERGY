@@ -37,9 +37,12 @@ export function generateMuxPlaybackToken({
   const signingInput = `${encodedHeader}.${encodedPayload}`;
 
   // Decode private key if base64-encoded
-  let pem = privateKeyBase64OrPem;
+  let pem = privateKeyBase64OrPem.trim();
+  if (pem.startsWith('"') && pem.endsWith('"')) {
+    pem = pem.slice(1, -1);
+  }
   if (!pem.includes('-----BEGIN')) {
-    pem = Buffer.from(privateKeyBase64OrPem, 'base64').toString('utf8');
+    pem = Buffer.from(pem, 'base64').toString('utf8');
   }
 
   const signer = createSign('RSA-SHA256');
@@ -60,7 +63,7 @@ export interface LessonMediaResponse {
 export function getLessonMedia(): LessonMediaResponse {
   const keyId = process.env.MUX_SIGNING_KEY_ID;
   const privateKey = process.env.MUX_PRIVATE_KEY;
-  const playbackId = process.env.MUX_PLAYBACK_ID;
+  const playbackId = process.env.MUX_PLAYBACK_ID || storefrontContent.course.fullVideoPlaybackId;
 
   if (keyId && privateKey && playbackId) {
     try {

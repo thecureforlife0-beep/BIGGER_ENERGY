@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { Moon, Sun } from 'lucide-react';
 
 const THEME_KEY = 'eggplant-theme';
@@ -24,12 +25,19 @@ export function Header() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-40">
-      <div className="mx-auto flex h-[72px] w-full max-w-[1720px] items-center justify-between px-6 sm:px-10 lg:px-16">
-        <a href="/" className="group flex min-h-11 items-center gap-3" aria-label="Chad Kermit home">
-          <span className="grid h-10 w-10 place-items-center rounded-full bg-[var(--accent)] text-[var(--accent-ink)] shadow-[0_8px_24px_rgba(139,207,34,0.24)] transition-transform group-hover:scale-105">
-            <span className="text-lg font-black tracking-[-0.12em]">CK</span>
-          </span>
-          <span className="hidden text-[11px] font-bold uppercase tracking-[0.24em] text-[var(--foreground)] sm:block">
+      <div className="mx-auto flex h-[76px] w-full max-w-[1920px] items-center justify-between px-6 sm:px-12 lg:px-20">
+        <a href="/" className="group flex min-h-11 items-center gap-3.5" aria-label="Chad Kermit home">
+          <div className="relative h-11 w-11 overflow-hidden rounded-full border-2 border-[var(--accent)] shadow-[0_8px_24px_rgba(139,207,34,0.3)] transition-transform group-hover:scale-105">
+            <Image
+              src="/images/chad-avatar.png"
+              alt="Chad Kermit"
+              width={44}
+              height={44}
+              className="h-full w-full object-cover object-top"
+              priority
+            />
+          </div>
+          <span className="hidden text-xs font-bold uppercase tracking-[0.24em] text-[var(--foreground)] sm:block">
             Chad Kermit
           </span>
         </a>

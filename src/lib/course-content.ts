@@ -27,11 +27,11 @@ export const storefrontContent = {
       'Instant private email delivery via encrypted token',
       'Permanent lifetime access · Zero recurring charges',
     ],
-    teaserVideoUrl:
-      'https://player.mux.com/rR8P8mSaKDzz02TsftugTUdI00cQPJX00oy?metadata-video-title=Bigger+Energy+Teaser&video-title=Bigger+Energy+Teaser',
+    teaserVideoUrl: 'https://player.mux.com/siyH5zQU5clqCpjNB4PifxJdumtz3GmTPMspucYfYSQ',
+    teaserPlaybackId: 'siyH5zQU5clqCpjNB4PifxJdumtz3GmTPMspucYfYSQ',
+    fullVideoPlaybackId: 'VcWXnOIk020102fKrEP351Fi52rHUNXOiJERaR7KEdOFKM',
     teaserThumbnailUrl: '/images/teaser-thumbnail.png',
-    heroImageSunset: '/images/hero-sunset.jpg',
-    heroImageDaylight: '/images/hero-daylight.jpg',
+    heroImageSunset: '/images/hero-4.png',
   },
   reviews: [
     {

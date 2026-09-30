@@ -142,7 +142,7 @@ export const AntechamberModal = ({
               <div
                 className="aspect-[16/7] bg-cover bg-center"
                 style={{
-                  backgroundImage: "url('/images/hero-sunset.jpg')",
+                  backgroundImage: "url('/images/hero-4.png')",
                 }}
                 role="img"
                 aria-label="Bigger Energy Masterclass"
@@ -209,6 +209,16 @@ export const AntechamberModal = ({
             <p className="mt-3 text-center text-xs leading-5 text-[var(--muted)]">
               Direct settlement to merchant wallets via Blunt.cash.
             </p>
+            <div className="mt-3 border-t border-[var(--line)] pt-3 text-center">
+              <a
+                href={storefrontContent.product.paymentUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-xs font-semibold text-[var(--muted)] underline transition hover:text-[var(--accent-strong)]"
+              >
+                Or pay directly on blunt.cash ↗
+              </a>
+            </div>
           </>
         )}
 
