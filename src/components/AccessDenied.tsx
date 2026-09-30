@@ -19,7 +19,10 @@ export function AccessDenied({ reason }: { reason: string | null }) {
             ? 'This access link is invalid or has expired. Re-open the original access email or contact support.'
             : reason || 'We could not verify this access link. Please try again shortly or contact support.'}
         </p>
-        <a href="/" className="mt-7 inline-flex min-h-12 items-center justify-center rounded-full bg-[var(--accent)] px-6 text-sm font-bold text-[var(--accent-ink)]">
+        <a
+          href="/"
+          className="mt-7 inline-flex h-[68px] sm:h-[72px] items-center justify-center rounded-full bg-[var(--accent)] px-8 text-base font-extrabold text-[var(--accent-ink)] shadow-[0_16px_40px_rgba(139,207,34,0.3)] transition-all duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)]"
+        >
           Return to the course page
         </a>
       </div>
