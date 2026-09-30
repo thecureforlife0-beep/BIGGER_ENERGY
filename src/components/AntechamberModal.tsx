@@ -193,7 +193,7 @@ export const AntechamberModal = ({
               type="button"
               onClick={onStartCheckout}
               disabled={isPreparing}
-              className="mt-7 flex min-h-[64px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-6 text-center text-sm font-bold tracking-[-0.01em] text-[var(--accent-ink)] shadow-[0_12px_34px_rgba(139,207,34,0.2)] transition hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-60 sm:px-8"
+              className="mt-7 flex h-[72px] sm:h-[76px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 text-center text-base sm:text-lg font-extrabold tracking-tight text-[var(--accent-ink)] shadow-[0_20px_50px_rgba(139,207,34,0.35)] transition-all duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isPreparing ? (
                 <>
@@ -255,7 +255,7 @@ export const AntechamberModal = ({
             </p>
             <a
               href={`/my-course/${storefrontContent.course.id}`}
-              className="mt-6 inline-flex min-h-[56px] items-center justify-center gap-2 rounded-full bg-[var(--accent)] px-8 text-sm font-bold text-[var(--accent-ink)]"
+              className="mt-6 flex h-[72px] sm:h-[76px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 text-base sm:text-lg font-extrabold text-[var(--accent-ink)] shadow-[0_16px_40px_rgba(139,207,34,0.3)] transition-all duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)]"
             >
               <ShieldCheck size={18} /> Enter Course Now
             </a>

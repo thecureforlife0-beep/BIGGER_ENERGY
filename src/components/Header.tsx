@@ -8,12 +8,20 @@ const THEME_KEY = 'eggplant-theme';
 
 export function Header() {
   const [isDark, setIsDark] = useState(true);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const saved = window.localStorage.getItem(THEME_KEY);
     const shouldUseDark = saved ? saved === 'dark' : true;
     setIsDark(shouldUseDark);
     document.documentElement.dataset.theme = shouldUseDark ? 'dark' : 'light';
+
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 4);
+    };
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const toggleTheme = () => {
@@ -24,7 +32,13 @@ export function Header() {
   };
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40">
+    <header
+      className={`fixed inset-x-0 top-0 z-40 transition-all duration-200 ${
+        isScrolled
+          ? 'border-b border-[var(--line)] bg-[var(--header-bg)] shadow-[0_12px_40px_rgba(0,0,0,0.22)] backdrop-blur-2xl'
+          : 'border-b border-transparent bg-transparent'
+      }`}
+    >
       <div className="mx-auto flex h-[76px] w-full max-w-[1920px] items-center justify-between px-6 sm:px-12 lg:px-20">
         <a href="/" className="group flex min-h-11 items-center gap-3.5" aria-label="Chad Kermit home">
           <div className="relative h-11 w-11 overflow-hidden rounded-full border-2 border-[var(--accent)] shadow-[0_8px_24px_rgba(139,207,34,0.3)] transition-transform group-hover:scale-105">

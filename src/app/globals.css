@@ -13,6 +13,7 @@
   --accent-strong: #6ea916;
   --accent-ink: #162300;
   --shadow: 0 24px 80px rgba(44, 72, 24, 0.12);
+  --header-bg: rgba(245, 247, 242, 0.95);
 }
 
 html[data-theme='dark'] {
@@ -26,6 +27,7 @@ html[data-theme='dark'] {
   --accent-strong: #b7f259;
   --accent-ink: #162300;
   --shadow: 0 24px 90px rgba(0, 0, 0, 0.36);
+  --header-bg: rgba(13, 16, 13, 0.95);
 }
 
 * {

@@ -125,7 +125,7 @@ export function PurchasedExperience({ courseId }: { courseId: string }) {
                 <button
                   type="button"
                   onClick={() => setIsPlaying(true)}
-                  className="inline-flex min-h-[58px] items-center justify-center gap-2 rounded-full bg-[var(--accent)] px-8 text-sm font-bold text-[var(--accent-ink)] shadow-[0_12px_36px_rgba(139,207,34,0.22)] transition hover:bg-[var(--accent-strong)]"
+                  className="inline-flex h-[72px] sm:h-[76px] items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-10 text-base font-extrabold text-[var(--accent-ink)] shadow-[0_20px_50px_rgba(139,207,34,0.3)] transition-all duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)]"
                 >
                   <Play size={18} fill="currentColor" /> Start Lesson
                 </button>

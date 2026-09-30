@@ -109,10 +109,10 @@ export function TeaserVideoPlayer({ onUnlockClick }: TeaserVideoPlayerProps) {
           <button
             type="button"
             onClick={onUnlockClick}
-            className="flex min-h-[50px] w-full items-center justify-center gap-2 rounded-full bg-[var(--accent)] px-6 text-xs font-bold uppercase tracking-wider text-[var(--accent-ink)] shadow-[0_10px_30px_rgba(139,207,34,0.22)] transition hover:bg-[var(--accent-strong)] sm:w-auto"
+            className="flex h-[68px] sm:h-[72px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 text-sm sm:text-base font-extrabold text-[var(--accent-ink)] shadow-[0_16px_40px_rgba(139,207,34,0.28)] transition-all duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)] sm:w-auto"
           >
             <span>Unlock Full Video (${storefrontContent.product.priceUsd.toFixed(2)})</span>
-            <ArrowRight size={16} strokeWidth={2.2} />
+            <ArrowRight size={18} strokeWidth={2.4} />
           </button>
         )}
       </div>

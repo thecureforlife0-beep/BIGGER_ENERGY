@@ -124,11 +124,11 @@ export function UnpurchasedHomepage() {
                 <button
                   type="button"
                   onClick={openCheckout}
-                  className="flex min-h-[72px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 text-lg font-bold tracking-tight text-[var(--accent-ink)] shadow-[0_20px_50px_rgba(139,207,34,0.35)] transition hover:-translate-y-0.5 hover:bg-[var(--accent-strong)]"
+                  className="flex h-[76px] sm:h-[80px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 sm:px-10 text-base sm:text-lg font-extrabold tracking-tight text-[var(--accent-ink)] shadow-[0_20px_50px_rgba(139,207,34,0.35)] transition-all duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)] hover:shadow-[0_24px_60px_rgba(139,207,34,0.45)]"
                   data-testid="cta-button"
                 >
                   <span>Start The Method</span>
-                  <span className="rounded-full bg-black/10 px-2.5 py-0.5 text-sm font-black">
+                  <span className="rounded-full bg-black/10 px-2.5 py-1 text-sm font-black">
                     ${storefrontContent.product.priceUsd.toFixed(2)}
                   </span>
                   <ArrowRight size={20} strokeWidth={2.4} />
@@ -212,9 +212,9 @@ export function UnpurchasedHomepage() {
                   <button
                     type="button"
                     onClick={openCheckout}
-                    className="flex min-h-[60px] w-full items-center justify-center gap-2 rounded-full bg-[var(--accent)] px-6 text-sm font-bold text-[var(--accent-ink)] shadow-[0_12px_36px_rgba(139,207,34,0.22)] transition hover:bg-[var(--accent-strong)]"
+                    className="flex h-[72px] sm:h-[76px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 text-base font-extrabold text-[var(--accent-ink)] shadow-[0_16px_40px_rgba(139,207,34,0.28)] transition-all duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)]"
                   >
-                    <Zap size={18} fill="currentColor" />
+                    <Zap size={20} fill="currentColor" />
                     <span>Unlock Full Video (${storefrontContent.product.priceUsd.toFixed(2)})</span>
                   </button>
                   <p className="mt-3 text-center text-xs text-[var(--muted)]">
@@ -358,10 +358,10 @@ export function UnpurchasedHomepage() {
                     href={storefrontContent.creator.socialUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-6 flex min-h-[54px] w-full items-center justify-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface)] text-sm font-bold text-[var(--foreground)] transition hover:bg-[var(--foreground)] hover:text-[var(--background)]"
+                    className="mt-6 flex h-[68px] sm:h-[72px] w-full items-center justify-center gap-3 rounded-full border border-[var(--line)] bg-[var(--surface)] px-8 text-base font-bold text-[var(--foreground)] transition-all duration-200 active:scale-[0.98] hover:bg-[var(--foreground)] hover:text-[var(--background)]"
                   >
                     <span>Message Joshua on Instagram</span>
-                    <ExternalLink size={16} />
+                    <ExternalLink size={18} />
                   </a>
                 </div>
               </div>
@@ -436,10 +436,10 @@ export function UnpurchasedHomepage() {
               <button
                 type="button"
                 onClick={openCheckout}
-                className="flex min-h-[64px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 text-base font-bold text-[var(--accent-ink)] shadow-[0_16px_40px_rgba(139,207,34,0.3)] transition hover:bg-[var(--accent-strong)] sm:w-auto"
+                className="flex h-[76px] sm:h-[80px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-10 text-base sm:text-lg font-extrabold text-[var(--accent-ink)] shadow-[0_20px_50px_rgba(139,207,34,0.35)] transition-all duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)] sm:w-auto"
               >
-                <span>Start The Method ($22.30)</span>
-                <ArrowRight size={19} strokeWidth={2.4} />
+                <span>Start The Method (${storefrontContent.product.priceUsd.toFixed(2)})</span>
+                <ArrowRight size={20} strokeWidth={2.4} />
               </button>
             </div>
           </div>

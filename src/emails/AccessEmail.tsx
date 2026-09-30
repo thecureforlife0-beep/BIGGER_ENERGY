@@ -103,15 +103,16 @@ const btnContainer = {
 };
 
 const button = {
-  backgroundColor: '#f59e0b', // amber-500
-  borderRadius: '6px',
-  color: '#0f172a', // slate-900
+  backgroundColor: '#8bcf22', // chad-accent
+  borderRadius: '9999px',
+  color: '#162300', // chad-accent-ink
   fontSize: '16px',
   fontWeight: 'bold',
   textDecoration: 'none',
   textAlign: 'center' as const,
   display: 'inline-block',
-  padding: '12px 24px',
+  padding: '18px 40px',
+  boxShadow: '0 8px 24px rgba(139, 207, 34, 0.35)',
 };
 
 const hr = {
