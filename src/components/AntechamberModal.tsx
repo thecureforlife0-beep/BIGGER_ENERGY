@@ -167,6 +167,14 @@ export const AntechamberModal = ({
               Pay directly from your wallet with crypto. Access is issued the moment payment confirms on-chain.
             </p>
 
+            <div className="mt-4 flex items-start gap-2.5 rounded-2xl bg-[var(--background)] px-4 py-3.5">
+              <span className="mt-0.5 text-[var(--accent-strong)] text-base leading-none">⏱</span>
+              <p className="text-xs leading-5 text-[var(--muted)]">
+                <span className="font-semibold text-[var(--foreground)]">30-minute payment window.</span>{' '}
+                Your crypto checkout session stays open for 30 minutes. Have your wallet ready before you open checkout — if the window expires, simply start again.
+              </p>
+            </div>
+
             {onEmailChange && (
               <div className="mt-6 space-y-2 text-left">
                 <label
