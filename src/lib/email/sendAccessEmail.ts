@@ -1,5 +1,5 @@
 import 'server-only';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import { redis } from '@/lib/redis';
 import { storefrontContent } from '@/lib/course-content';
 
@@ -16,7 +16,7 @@ export async function sendAccessEmail({
   courseId,
   token: providedToken,
 }: SendAccessEmailParams): Promise<void> {
-  // 1. Replay protection: check if an email was already dispatched for this order
+  // 1. Replay protection — never double-send for the same order
   const alreadySent = await redis.get<string>(`email:sent:${orderId}`);
   if (alreadySent) {
     return;
@@ -32,30 +32,24 @@ export async function sendAccessEmail({
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  // Construct direct course access URL with token
   const accessUrl = `${baseUrl}/access?token=${encodeURIComponent(token)}&courseId=${encodeURIComponent(courseId)}`;
 
-  const gmailUser = process.env.EGGPLANT_METHOD_GMAIL_USER;
-  const gmailPass = process.env.EGGPLANT_METHOD_GMAIL_APP_PASSWORD;
+  const resendKey = process.env.RESEND_API_KEY;
 
-  // In local dev without SMTP credentials, log the access link safely and mark sent
-  if (!gmailUser || !gmailPass) {
+  // In local dev without Resend key, log the access link and mark sent
+  if (!resendKey) {
     console.info(`[email:dev] Simulated delivery for order ${orderId} to ${email}:`);
     console.info(`[email:dev] Access URL: ${accessUrl}`);
     await redis.set(`email:sent:${orderId}`, '1', { ex: 60 * 60 * 24 * 400 });
     return;
   }
 
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: gmailUser,
-      pass: gmailPass,
-    },
-  });
+  const resend = new Resend(resendKey);
 
-  await transporter.sendMail({
-    from: `"Chad Kermit" <${gmailUser}>`,
+  const fromAddress = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+
+  const { error } = await resend.emails.send({
+    from: `Chad Kermit <${fromAddress}>`,
     to: email,
     subject: `Your Private Access: ${storefrontContent.course.title}`,
     html: `
@@ -64,9 +58,9 @@ export async function sendAccessEmail({
           <p style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; color: #65a30d; margin: 0 0 12px 0;">Private Entitlement Confirmed</p>
           <h1 style="font-size: 24px; font-weight: 700; margin: 0 0 16px 0; color: #000;">Your access is ready.</h1>
           <p style="font-size: 15px; line-height: 1.6; color: #555; margin: 0 0 24px 0;">
-            Your payment confirmed on-chain. Click below to enter the private student portal and stream your lesson.
+            Your transaction confirmed on-chain. Click below to enter the private student portal and stream your lesson.
           </p>
-          <a href="${accessUrl}" style="display: inline-block; background-color: #8bcf22; color: #000; font-weight: 700; text-decoration: none; padding: 14px 28px; border-radius: 9999px; font-size: 15px;">
+          <a href="${accessUrl}" style="display: inline-block; background-color: #8bcf22; color: #000; font-weight: 700; text-decoration: none; padding: 18px 40px; border-radius: 9999px; font-size: 15px;">
             Open Private Lesson
           </a>
           <p style="margin: 32px 0 0 0; font-size: 12px; color: #888; border-top: 1px solid #eee; padding-top: 16px;">
@@ -76,6 +70,10 @@ export async function sendAccessEmail({
       </div>
     `,
   });
+
+  if (error) {
+    throw new Error(`[Resend] Failed to send access email: ${error.message}`);
+  }
 
   await redis.set(`email:sent:${orderId}`, '1', { ex: 60 * 60 * 24 * 400 });
 }

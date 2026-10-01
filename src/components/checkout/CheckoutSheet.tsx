@@ -51,7 +51,25 @@ export function CheckoutSheet({ isOpen, onClose }: CheckoutSheetProps) {
   const pollOrderStatus = useCallback((orderId: string) => {
     if (pollTimerRef.current) clearInterval(pollTimerRef.current);
 
+    const MAX_ATTEMPTS = 72; // 72 × 2500ms = 3 minutes
+    let attempts = 0;
+
     pollTimerRef.current = setInterval(async () => {
+      attempts += 1;
+
+      // Stop and surface timeout if we've waited 3 minutes without confirmation
+      if (attempts > MAX_ATTEMPTS) {
+        if (pollTimerRef.current) {
+          clearInterval(pollTimerRef.current);
+          pollTimerRef.current = null;
+        }
+        setErrorMessage(
+          'Payment confirmation is taking longer than expected. If your transaction went through, check your email — your access link will arrive once the network confirms.'
+        );
+        setPhase('error');
+        return;
+      }
+
       try {
         const res = await fetch(`/api/orders/${orderId}`, { cache: 'no-store' });
         if (!res.ok) return;
