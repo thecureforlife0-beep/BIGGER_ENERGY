@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
-import { ArrowRight, Check, Loader2, LockKeyhole, ShieldCheck, X } from 'lucide-react';
+import { ArrowRight, Check, ExternalLink, Loader2, LockKeyhole, ShieldCheck, X, Zap } from 'lucide-react';
 import { storefrontContent } from '@/lib/course-content';
 
 export type CheckoutPhase = 'idle' | 'preparing' | 'checkout' | 'confirming' | 'fulfilled' | 'error';
@@ -175,6 +175,43 @@ export const AntechamberModal = ({
               </p>
             </div>
 
+            {/* PROMINENT DIRECT BLUNT.CASH PAYMENT OPTION (Recommended) */}
+            <div className="mt-7 rounded-3xl border border-[var(--accent-strong)]/30 bg-[var(--background)] p-6 text-left shadow-lg">
+              <div className="flex items-center justify-between gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[rgba(139,207,34,0.15)] px-3 py-1 text-[11px] font-bold text-[var(--accent-strong)]">
+                  <Zap size={13} className="fill-current" /> Direct Crypto Checkout
+                </span>
+                <span className="text-xs font-semibold text-[var(--muted)]">Arbitrum · Base · Solana · ETH</span>
+              </div>
+
+              <h3 className="mt-3 text-lg font-bold text-[var(--foreground)]">
+                Pay Directly on Blunt.cash
+              </h3>
+              <p className="mt-1 text-xs leading-relaxed text-[var(--muted)]">
+                Direct merchant settlement with zero intermediary freeze risk. Enter your delivery email on the Blunt checkout page to receive your private stream link upon confirmation.
+              </p>
+
+              <a
+                href={storefrontContent.product.paymentUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-5 flex h-[72px] sm:h-[76px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 text-center text-base sm:text-lg font-extrabold tracking-tight text-[var(--accent-ink)] shadow-[0_20px_50px_rgba(139,207,34,0.35)] transition-all duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)] hover:shadow-[0_24px_60px_rgba(139,207,34,0.45)]"
+              >
+                <span>Open Blunt.cash Checkout (${storefrontContent.product.priceUsd.toFixed(2)})</span>
+                <ExternalLink size={20} strokeWidth={2.4} />
+              </a>
+            </div>
+
+            {/* SECONDARY: IN-DRAWER WIDGET (Optional) */}
+            <div className="relative mt-8 text-center">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-[var(--line)]" />
+              </div>
+              <div className="relative flex justify-center text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--muted)]">
+                <span className="bg-[var(--surface-strong)] px-3">Or Pay In This Window</span>
+              </div>
+            </div>
+
             {onEmailChange && (
               <div className="mt-6 space-y-2 text-left">
                 <label
@@ -186,7 +223,6 @@ export const AntechamberModal = ({
                 <input
                   id="customer-delivery-email"
                   type="email"
-                  required
                   placeholder="you@domain.com"
                   value={email}
                   onChange={(e) => onEmailChange(e.target.value)}
@@ -201,32 +237,20 @@ export const AntechamberModal = ({
               type="button"
               onClick={onStartCheckout}
               disabled={isPreparing}
-              className="mt-7 flex h-[72px] sm:h-[76px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 text-center text-base sm:text-lg font-extrabold tracking-tight text-[var(--accent-ink)] shadow-[0_20px_50px_rgba(139,207,34,0.35)] transition-all duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-4 flex h-[60px] sm:h-[64px] w-full items-center justify-center gap-2.5 rounded-full border border-[var(--line)] bg-[var(--background)] px-8 text-center text-sm sm:text-base font-bold text-[var(--foreground)] transition-all duration-200 hover:border-[var(--accent)] hover:text-[var(--accent-strong)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isPreparing ? (
                 <>
-                  <Loader2 size={18} className="animate-spin" /> Preparing secure checkout…
+                  <Loader2 size={16} className="animate-spin" /> Preparing in-drawer widget…
                 </>
               ) : (
                 <>
-                  <LockKeyhole size={17} /> Start secure checkout (${storefrontContent.product.priceUsd.toFixed(2)})
-                  <ArrowRight size={18} strokeWidth={2} />
+                  <LockKeyhole size={16} />
+                  <span>Launch In-Drawer Widget</span>
+                  <ArrowRight size={16} strokeWidth={2} />
                 </>
               )}
             </button>
-            <p className="mt-3 text-center text-xs leading-5 text-[var(--muted)]">
-              Direct settlement to merchant wallets via Blunt.cash.
-            </p>
-            <div className="mt-3 border-t border-[var(--line)] pt-3 text-center">
-              <a
-                href={storefrontContent.product.paymentUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="text-xs font-semibold text-[var(--muted)] underline transition hover:text-[var(--accent-strong)]"
-              >
-                Or pay directly on blunt.cash ↗
-              </a>
-            </div>
           </>
         )}
 

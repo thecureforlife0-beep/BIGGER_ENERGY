@@ -144,6 +144,16 @@ export function UnpurchasedHomepage() {
                     <Play size={12} fill="currentColor" />
                   </a>
                 </div>
+
+                <a
+                  href={storefrontContent.product.paymentUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-1.5 rounded-full border border-[var(--line)] bg-[var(--surface-strong)]/80 py-2.5 px-4 text-xs font-bold text-[var(--foreground)] transition-all duration-200 hover:border-[var(--accent)] hover:text-[var(--accent-strong)] hover:shadow-md active:scale-[0.98]"
+                >
+                  <Zap size={14} className="fill-[var(--accent-strong)] text-[var(--accent-strong)]" />
+                  <span>Direct Crypto Checkout: pay.blunt.cash ↗</span>
+                </a>
               </div>
             </div>
           </div>
@@ -441,6 +451,16 @@ export function UnpurchasedHomepage() {
                 <span>Start The Method (${storefrontContent.product.priceUsd.toFixed(2)})</span>
                 <ArrowRight size={20} strokeWidth={2.4} />
               </button>
+
+              <a
+                href={storefrontContent.product.paymentUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-[76px] sm:h-[80px] w-full items-center justify-center gap-2.5 rounded-full border border-[var(--line)] bg-[var(--surface-strong)] px-8 text-base font-extrabold text-[var(--foreground)] transition-all duration-200 hover:border-[var(--accent)] hover:text-[var(--accent-strong)] active:scale-[0.98] sm:w-auto"
+              >
+                <Zap size={18} className="fill-[var(--accent-strong)] text-[var(--accent-strong)]" />
+                <span>Direct Blunt.cash ↗</span>
+              </a>
             </div>
           </div>
         </section>
