@@ -7,6 +7,7 @@ import {
   markEventDone,
   getOrder,
   patchOrder,
+  getOrCreateOrderByPayment,
 } from '@/lib/orders/store';
 import { issueEntitlement } from '@/lib/entitlements/store';
 import { sendAccessEmail } from '@/lib/email/sendAccessEmail';
@@ -94,19 +95,35 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ received: true, duplicate: true }, { status: 200 });
   }
 
-  const orderId = String(e.metadata?.order_id ?? e.metadata?.orderId ?? '');
+  let orderId = String(e.metadata?.order_id ?? e.metadata?.orderId ?? '');
   const courseId = String(e.metadata?.course_id ?? e.metadata?.courseId ?? PRODUCT.courseId);
-  const email = String(e.metadata?.email ?? e.metadata?.customerEmail ?? '');
+  const email = String(
+    e.metadata?.email ??
+    e.metadata?.customerEmail ??
+    e.metadata?.customer_email ??
+    e.sender_wallet ??
+    ''
+  ).trim();
 
-  if (!orderId || courseId !== PRODUCT.courseId || !email) {
+  if (courseId !== PRODUCT.courseId) {
     await markEventDone(e.payment_id);
-    return NextResponse.json({ error: 'unmappable_payment' }, { status: 422 });
+    return NextResponse.json({ error: 'unmappable_course', courseId }, { status: 422 });
   }
 
-  const order = await getOrder(orderId);
+  let order: Awaited<ReturnType<typeof getOrder>> = null;
+  if (orderId) {
+    order = await getOrder(orderId);
+  }
+
+  // If orderId is absent (e.g. buyer paid via direct hosted link at pay.blunt.cash/buy/bigger-energy),
+  // auto-synthesize an order record so the buyer receives their access entitlement without delay.
   if (!order) {
-    await markEventDone(e.payment_id);
-    return NextResponse.json({ error: 'unknown_order' }, { status: 422 });
+    if (!email) {
+      await markEventDone(e.payment_id);
+      return NextResponse.json({ error: 'unmappable_payment_no_email' }, { status: 422 });
+    }
+    order = await getOrCreateOrderByPayment(e.payment_id, e.amount_usd, email, courseId);
+    orderId = order.id;
   }
 
   // 8. Settlement checks

@@ -1,0 +1,9 @@
+# BIGGER_ENERGY // 16 — REMEDIATION AND EXECUTION REGISTER
+
+| Defect ID | Priority | Feature | Defect Description | Root Cause | Status | Verification Evidence |
+|---|---|---|---|---|---|---|
+| **COMM-001** | **P0** | Blunt Webhook | Hosted link purchases at `pay.blunt.cash/buy/bigger-energy` were rejected with 422 `unmappable_payment` because `orderId` was absent in webhook metadata. | Missing fallback order creation for direct link payments. | 🟢 **CLOSED** | Patched in `src/app/api/blunt/webhook/route.ts` with `getOrCreateOrderByPayment`. Verified in clean production build. |
+| **PAY-002** | **P1** | Payment Rails | Storefront was hardcoded exclusively to Blunt.cash with zero ability to hot-swap or run a secondary provider. | Monolithic checkout coupling in UI and API routes. | 🟢 **CLOSED** | Architected `PaymentProviderAdapter`, `src/lib/payments/config.ts`, `AntechamberModal.tsx` dual-rail support, and `/api/webhooks/secondary`. |
+| **STREAM-003** | **P1** | Video Streaming | Desktop Chrome/Firefox failed to play Mux HLS `.m3u8` video natively. | Native HTML5 `<video>` lacks built-in HLS demuxing on non-Safari desktop browsers. | 🟢 **CLOSED** | Upgraded `src/components/PurchasedExperience.tsx` to stream via official Mux Web Player iframe `player.mux.com/${playbackId}?token=${token}`. |
+| **STREAM-004** | **P2** | Mux Multi-Env | Only supported single Mux account with unescaped newline risks on Vercel. | Missing multi-environment fallback and RSA key normalization. | 🟢 **CLOSED** | Implemented `MUX_ACTIVE_ENV`, `MUX_SECONDARY_*`, and `replace(/\\n/g, '\n')` in `src/lib/mux.ts`. |
+| **GIT-005** | **P0** | Version Control | Local Git remote pointed to old scrapped repository `Ian-Leakey-G0At/chad-kermit-storefront.git`. | Stale remote configuration. | 🟢 **CLOSED** | Updated git remote to `https://github.com/thecureforlife0-beep/BIGGER_ENERGY.git`. Verified with `git remote -v`. |

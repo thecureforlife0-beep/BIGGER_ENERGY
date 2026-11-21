@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from 'react';
 import { ArrowRight, Check, ExternalLink, Loader2, LockKeyhole, ShieldCheck, X, Zap } from 'lucide-react';
 import { storefrontContent } from '@/lib/course-content';
+import { getAvailablePaymentProviders } from '@/lib/payments/config';
 
 export type CheckoutPhase = 'idle' | 'preparing' | 'checkout' | 'confirming' | 'fulfilled' | 'error';
 
@@ -33,6 +34,17 @@ export const AntechamberModal = ({
 }: AntechamberModalProps) => {
   const panelRef = useRef<HTMLElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+
+  const providers = getAvailablePaymentProviders();
+  const primaryProvider = providers.find((p) => p.isPrimary) ?? providers[0] ?? {
+    id: 'blunt',
+    name: 'Blunt.cash',
+    badge: 'Direct Crypto Checkout',
+    chains: 'Arbitrum · Base · Solana · ETH',
+    checkoutUrl: storefrontContent.product.paymentUrl,
+    isPrimary: true,
+  };
+  const secondaryProviders = providers.filter((p) => p.id !== primaryProvider.id && p.checkoutUrl);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -175,32 +187,54 @@ export const AntechamberModal = ({
               </p>
             </div>
 
-            {/* PROMINENT DIRECT BLUNT.CASH PAYMENT OPTION (Recommended) */}
+            {/* PRIMARY DIRECT CHECKOUT OPTION */}
             <div className="mt-7 rounded-3xl border border-[var(--accent-strong)]/30 bg-[var(--background)] p-6 text-left shadow-lg">
               <div className="flex items-center justify-between gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-[rgba(139,207,34,0.15)] px-3 py-1 text-[11px] font-bold text-[var(--accent-strong)]">
-                  <Zap size={13} className="fill-current" /> Direct Crypto Checkout
+                  <Zap size={13} className="fill-current" /> {primaryProvider.badge}
                 </span>
-                <span className="text-xs font-semibold text-[var(--muted)]">Arbitrum · Base · Solana · ETH</span>
+                <span className="text-xs font-semibold text-[var(--muted)]">{primaryProvider.chains}</span>
               </div>
 
               <h3 className="mt-3 text-lg font-bold text-[var(--foreground)]">
-                Pay Directly on Blunt.cash
+                Pay Directly on {primaryProvider.name}
               </h3>
               <p className="mt-1 text-xs leading-relaxed text-[var(--muted)]">
-                Direct merchant settlement with zero intermediary freeze risk. Enter your delivery email on the Blunt checkout page to receive your private stream link upon confirmation.
+                Direct merchant settlement with zero intermediary freeze risk. Enter your delivery email on checkout to receive your private stream link upon confirmation.
               </p>
 
               <a
-                href={storefrontContent.product.paymentUrl}
+                href={primaryProvider.checkoutUrl || storefrontContent.product.paymentUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-5 flex h-[72px] sm:h-[76px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 text-center text-base sm:text-lg font-extrabold tracking-tight text-[var(--accent-ink)] shadow-[0_20px_50px_rgba(139,207,34,0.35)] transition-all duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)] hover:shadow-[0_24px_60px_rgba(139,207,34,0.45)]"
               >
-                <span>Open Blunt.cash Checkout (${storefrontContent.product.priceUsd.toFixed(2)})</span>
+                <span>Open {primaryProvider.name} Checkout (${storefrontContent.product.priceUsd.toFixed(2)})</span>
                 <ExternalLink size={20} strokeWidth={2.4} />
               </a>
             </div>
+
+            {/* SECONDARY / ALTERNATIVE PAYMENT RAILS (If Configured) */}
+            {secondaryProviders.map((sec) => (
+              <div key={sec.id} className="mt-4 rounded-3xl border border-[var(--line)] bg-[var(--background)] p-5 text-left">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[11px] font-bold text-[var(--foreground)]">
+                    <Zap size={13} className="fill-current text-[var(--accent-strong)]" /> {sec.badge}
+                  </span>
+                  <span className="text-xs font-semibold text-[var(--muted)]">{sec.chains}</span>
+                </div>
+                <h4 className="mt-2 text-base font-bold text-[var(--foreground)]">Alternative: Pay via {sec.name}</h4>
+                <a
+                  href={sec.checkoutUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 flex h-[60px] w-full items-center justify-center gap-2.5 rounded-full border border-[var(--line)] bg-[var(--surface)] px-6 text-sm font-bold text-[var(--foreground)] transition-all duration-200 hover:border-[var(--accent)] hover:text-[var(--accent-strong)] active:scale-[0.98]"
+                >
+                  <span>Open {sec.name} (${storefrontContent.product.priceUsd.toFixed(2)})</span>
+                  <ExternalLink size={17} />
+                </a>
+              </div>
+            ))}
 
             {/* SECONDARY: IN-DRAWER WIDGET (Optional) */}
             <div className="relative mt-8 text-center">

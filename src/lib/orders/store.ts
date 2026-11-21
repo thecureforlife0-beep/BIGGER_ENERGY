@@ -33,6 +33,39 @@ export async function getOrder(orderId: string): Promise<Order | null> {
   return typeof raw === 'string' ? (JSON.parse(raw) as Order) : raw;
 }
 
+/**
+ * Resolves or synthesizes an order record for a direct hosted payment (e.g. from pay.blunt.cash/buy/bigger-energy)
+ * ensuring that buyers who pay via direct payment links are never unmappable or left without access.
+ */
+export async function getOrCreateOrderByPayment(
+  paymentId: string,
+  amountUsd: number,
+  email: string,
+  courseId: string = PRODUCT.courseId,
+): Promise<Order> {
+  const existingOrderId = await redis.get<string>(`order:by-payment:${paymentId}`);
+  if (existingOrderId) {
+    const existing = await getOrder(existingOrderId);
+    if (existing) return existing;
+  }
+
+  const order: Order = {
+    id: newId('ord_hosted'),
+    sessionId: `hosted_${paymentId}`,
+    courseId,
+    productVersion: PRODUCT.productVersion,
+    amountUsd,
+    status: 'created',
+    email,
+    paymentIds: [paymentId],
+    isTest: process.env.BLUNT_MODE !== 'live',
+    createdAt: new Date().toISOString(),
+  };
+  await redis.set(`order:${order.id}`, JSON.stringify(order), { ex: ORDER_TTL });
+  await redis.set(`order:by-payment:${paymentId}`, order.id, { ex: 60 * 60 * 24 * 400 });
+  return order;
+}
+
 /** Resume an existing open order for this browser session, if one exists. */
 export async function findOpenOrderBySession(sessionId: string): Promise<Order | null> {
   const orderId = await redis.get<string>(`order:open:${sessionId}`);

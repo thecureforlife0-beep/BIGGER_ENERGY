@@ -27,8 +27,12 @@ export const storefrontContent = {
       'Instant private email delivery via encrypted token',
       'Permanent lifetime access · Zero recurring charges',
     ],
-    teaserVideoUrl: 'https://player.mux.com/siyH5zQU5clqCpjNB4PifxJdumtz3GmTPMspucYfYSQ',
-    teaserPlaybackId: 'siyH5zQU5clqCpjNB4PifxJdumtz3GmTPMspucYfYSQ',
+    teaserVideoUrl:
+      process.env.NEXT_PUBLIC_MUX_TEASER_URL ||
+      'https://player.mux.com/ac3dvpgq7mCwBZaa7eQQd7EhtvlFzc5xEY9j3c02W4DE',
+    teaserPlaybackId:
+      process.env.NEXT_PUBLIC_MUX_TEASER_PLAYBACK_ID ||
+      'ac3dvpgq7mCwBZaa7eQQd7EhtvlFzc5xEY9j3c02W4DE',
     fullVideoPlaybackId: 'VcWXnOIk020102fKrEP351Fi52rHUNXOiJERaR7KEdOFKM',
     teaserThumbnailUrl: '/images/teaser-thumbnail.png',
     heroImageSunset: '/images/hero-4.png',

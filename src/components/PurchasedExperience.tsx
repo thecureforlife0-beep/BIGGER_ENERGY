@@ -7,6 +7,7 @@ import { storefrontContent } from '@/lib/course-content';
 interface MediaInfo {
   playbackUrl: string;
   playbackId: string;
+  token?: string;
   isDevFallback: boolean;
   format: string;
 }
@@ -90,12 +91,13 @@ export function PurchasedExperience({ courseId }: { courseId: string }) {
           </div>
         ) : isPlaying && media?.playbackUrl ? (
           <div className="relative aspect-video w-full overflow-hidden bg-black">
-            {media.format === 'hls' ? (
-              <video
-                src={media.playbackUrl}
-                controls
-                autoPlay
-                className="h-full w-full object-contain"
+            {media.format === 'hls' && media.token ? (
+              <iframe
+                src={`https://player.mux.com/${media.playbackId}?token=${media.token}&autoplay=1`}
+                title="Bigger Energy Masterclass Stream"
+                className="h-full w-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
               />
             ) : (
               <iframe
