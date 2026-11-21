@@ -124,7 +124,7 @@ export function UnpurchasedHomepage() {
                 <button
                   type="button"
                   onClick={openCheckout}
-                  className="flex h-[76px] sm:h-[80px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 sm:px-10 text-base sm:text-lg font-extrabold tracking-tight text-[var(--accent-ink)] shadow-[0_20px_50px_rgba(139,207,34,0.35)] transition-all duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)] hover:shadow-[0_24px_60px_rgba(139,207,34,0.45)]"
+                  className="flex h-[76px] sm:h-[80px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 sm:px-10 text-base sm:text-lg font-extrabold tracking-tight text-[var(--accent-ink)] transition-colors duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)]"
                   data-testid="cta-button"
                 >
                   <span>Start The Method</span>
@@ -149,7 +149,7 @@ export function UnpurchasedHomepage() {
                   href={storefrontContent.product.paymentUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-1.5 rounded-full border border-[var(--line)] bg-[var(--surface-strong)]/80 py-2.5 px-4 text-xs font-bold text-[var(--foreground)] transition-all duration-200 hover:border-[var(--accent)] hover:text-[var(--accent-strong)] hover:shadow-md active:scale-[0.98]"
+                  className="flex items-center justify-center gap-1.5 rounded-full border border-[var(--line)] bg-[var(--surface-strong)]/80 py-2.5 px-4 text-xs font-bold text-[var(--foreground)] transition-colors duration-200 hover:border-[var(--accent)] hover:text-[var(--accent-strong)] active:scale-[0.98]"
                 >
                   <Zap size={14} className="fill-[var(--accent-strong)] text-[var(--accent-strong)]" />
                   <span>Direct Crypto Checkout: pay.blunt.cash ↗</span>
@@ -222,7 +222,7 @@ export function UnpurchasedHomepage() {
                   <button
                     type="button"
                     onClick={openCheckout}
-                    className="flex h-[72px] sm:h-[76px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 text-base font-extrabold text-[var(--accent-ink)] shadow-[0_16px_40px_rgba(139,207,34,0.28)] transition-all duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)]"
+                    className="flex h-[72px] sm:h-[76px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 text-base font-extrabold text-[var(--accent-ink)] transition-colors duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)]"
                   >
                     <Zap size={20} fill="currentColor" />
                     <span>Unlock Full Video (${storefrontContent.product.priceUsd.toFixed(2)})</span>
@@ -446,7 +446,7 @@ export function UnpurchasedHomepage() {
               <button
                 type="button"
                 onClick={openCheckout}
-                className="flex h-[76px] sm:h-[80px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-10 text-base sm:text-lg font-extrabold text-[var(--accent-ink)] shadow-[0_20px_50px_rgba(139,207,34,0.35)] transition-all duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)] sm:w-auto"
+                className="flex h-[76px] sm:h-[80px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-10 text-base sm:text-lg font-extrabold text-[var(--accent-ink)] transition-colors duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)] sm:w-auto"
               >
                 <span>Start The Method (${storefrontContent.product.priceUsd.toFixed(2)})</span>
                 <ArrowRight size={20} strokeWidth={2.4} />

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Check, ExternalLink, Loader2, LockKeyhole, ShieldCheck, X, Zap } from 'lucide-react';
 import { storefrontContent } from '@/lib/course-content';
 import { getAvailablePaymentProviders } from '@/lib/payments/config';
@@ -34,6 +34,33 @@ export const AntechamberModal = ({
 }: AntechamberModalProps) => {
   const panelRef = useRef<HTMLElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+  const [paymegateLoading, setPaymegateLoading] = useState(false);
+  const [paymegateError, setPaymegateError] = useState<string | null>(null);
+
+  const handlePaymegateCheckout = async () => {
+    if (paymegateLoading) return;
+    setPaymegateError(null);
+    setPaymegateLoading(true);
+    try {
+      const res = await fetch('/api/paymegate/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email?.trim() ? email.trim() : undefined,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data?.checkoutUrl) {
+        throw new Error(data?.error || 'Could not initialize Paymegate checkout.');
+      }
+      window.location.assign(data.checkoutUrl);
+    } catch (err) {
+      setPaymegateError(
+        err instanceof Error ? err.message : 'Unable to initialize Paymegate checkout. Please try again.',
+      );
+      setPaymegateLoading(false);
+    }
+  };
 
   const providers = getAvailablePaymentProviders();
   const primaryProvider = providers.find((p) => p.isPrimary) ?? providers[0] ?? {
@@ -188,7 +215,7 @@ export const AntechamberModal = ({
             </div>
 
             {/* PRIMARY DIRECT CHECKOUT OPTION */}
-            <div className="mt-7 rounded-3xl border border-[var(--accent-strong)]/30 bg-[var(--background)] p-6 text-left shadow-lg">
+            <div className="mt-7 rounded-3xl border border-[var(--line)] bg-[var(--background)] p-6 text-left">
               <div className="flex items-center justify-between gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-[rgba(139,207,34,0.15)] px-3 py-1 text-[11px] font-bold text-[var(--accent-strong)]">
                   <Zap size={13} className="fill-current" /> {primaryProvider.badge}
@@ -203,15 +230,36 @@ export const AntechamberModal = ({
                 Direct merchant settlement with zero intermediary freeze risk. Enter your delivery email on checkout to receive your private stream link upon confirmation.
               </p>
 
-              <a
-                href={primaryProvider.checkoutUrl || storefrontContent.product.paymentUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-5 flex h-[72px] sm:h-[76px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 text-center text-base sm:text-lg font-extrabold tracking-tight text-[var(--accent-ink)] shadow-[0_20px_50px_rgba(139,207,34,0.35)] transition-all duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)] hover:shadow-[0_24px_60px_rgba(139,207,34,0.45)]"
-              >
-                <span>Open {primaryProvider.name} Checkout (${storefrontContent.product.priceUsd.toFixed(2)})</span>
-                <ExternalLink size={20} strokeWidth={2.4} />
-              </a>
+              {primaryProvider.id === 'provider_b' ? (
+                <button
+                  type="button"
+                  onClick={handlePaymegateCheckout}
+                  disabled={paymegateLoading}
+                  className="mt-5 flex h-[72px] sm:h-[76px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 text-center text-base sm:text-lg font-extrabold tracking-tight text-[var(--accent-ink)] transition-colors duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {paymegateLoading ? (
+                    <>
+                      <Loader2 size={20} className="animate-spin" />
+                      <span>Opening {primaryProvider.name}…</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Open {primaryProvider.name} Checkout (${storefrontContent.product.priceUsd.toFixed(2)})</span>
+                      <ExternalLink size={20} strokeWidth={2.4} />
+                    </>
+                  )}
+                </button>
+              ) : (
+                <a
+                  href={primaryProvider.checkoutUrl || storefrontContent.product.paymentUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-5 flex h-[72px] sm:h-[76px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 text-center text-base sm:text-lg font-extrabold tracking-tight text-[var(--accent-ink)] transition-colors duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)]"
+                >
+                  <span>Open {primaryProvider.name} Checkout (${storefrontContent.product.priceUsd.toFixed(2)})</span>
+                  <ExternalLink size={20} strokeWidth={2.4} />
+                </a>
+              )}
             </div>
 
             {/* SECONDARY / ALTERNATIVE PAYMENT RAILS (If Configured) */}
@@ -224,15 +272,41 @@ export const AntechamberModal = ({
                   <span className="text-xs font-semibold text-[var(--muted)]">{sec.chains}</span>
                 </div>
                 <h4 className="mt-2 text-base font-bold text-[var(--foreground)]">Alternative: Pay via {sec.name}</h4>
-                <a
-                  href={sec.checkoutUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-4 flex h-[60px] w-full items-center justify-center gap-2.5 rounded-full border border-[var(--line)] bg-[var(--surface)] px-6 text-sm font-bold text-[var(--foreground)] transition-all duration-200 hover:border-[var(--accent)] hover:text-[var(--accent-strong)] active:scale-[0.98]"
-                >
-                  <span>Open {sec.name} (${storefrontContent.product.priceUsd.toFixed(2)})</span>
-                  <ExternalLink size={17} />
-                </a>
+                {sec.id === 'provider_b' ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handlePaymegateCheckout}
+                      disabled={paymegateLoading}
+                      className="mt-4 flex h-[60px] w-full items-center justify-center gap-2.5 rounded-full border border-[var(--line)] bg-[var(--surface)] px-6 text-sm font-bold text-[var(--foreground)] transition-colors duration-200 hover:border-[var(--accent)] hover:text-[var(--accent-strong)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {paymegateLoading ? (
+                        <>
+                          <Loader2 size={17} className="animate-spin" />
+                          <span>Opening {sec.name}…</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Open {sec.name} (${storefrontContent.product.priceUsd.toFixed(2)})</span>
+                          <ExternalLink size={17} />
+                        </>
+                      )}
+                    </button>
+                    {paymegateError && (
+                      <p className="mt-2 text-xs font-medium text-red-400">{paymegateError}</p>
+                    )}
+                  </>
+                ) : (
+                  <a
+                    href={sec.checkoutUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 flex h-[60px] w-full items-center justify-center gap-2.5 rounded-full border border-[var(--line)] bg-[var(--surface)] px-6 text-sm font-bold text-[var(--foreground)] transition-colors duration-200 hover:border-[var(--accent)] hover:text-[var(--accent-strong)] active:scale-[0.98]"
+                  >
+                    <span>Open {sec.name} (${storefrontContent.product.priceUsd.toFixed(2)})</span>
+                    <ExternalLink size={17} />
+                  </a>
+                )}
               </div>
             ))}
 
@@ -321,7 +395,7 @@ export const AntechamberModal = ({
             </p>
             <a
               href={`/my-course/${storefrontContent.course.id}`}
-              className="mt-6 flex h-[72px] sm:h-[76px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 text-base sm:text-lg font-extrabold text-[var(--accent-ink)] shadow-[0_16px_40px_rgba(139,207,34,0.3)] transition-all duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)]"
+              className="mt-6 flex h-[72px] sm:h-[76px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 text-base sm:text-lg font-extrabold text-[var(--accent-ink)] transition-colors duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)]"
             >
               <ShieldCheck size={18} /> Enter Course Now
             </a>

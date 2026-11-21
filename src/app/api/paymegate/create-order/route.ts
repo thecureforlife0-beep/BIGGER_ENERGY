@@ -46,19 +46,9 @@ export async function POST(req: NextRequest) {
     });
   } catch (err) {
     console.error('[paymegate] Failed to initialize checkout:', err);
-    // Fall back to configured checkout URL if available
-    const staticUrl =
-      process.env.PAYMEGATE_CHECKOUT_URL ||
-      process.env.NEXT_PUBLIC_PROVIDER_B_PAYMENT_URL ||
-      'https://www.paymegate.com/checkout/884a31cd-6589-449e-90a8-da36aa5469ef';
-
-    return NextResponse.json({
-      orderId: order.id,
-      sessionId,
-      amountUsd: order.amountUsd,
-      checkoutUrl: staticUrl,
-      orderUUID: 'fallback_checkout',
-      resumed: Boolean(resumed),
-    });
+    return NextResponse.json(
+      { error: 'Paymegate checkout is temporarily unavailable. Please try Blunt.cash or retry.' },
+      { status: 502 },
+    );
   }
 }

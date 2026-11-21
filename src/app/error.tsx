@@ -43,7 +43,7 @@ export default function GlobalErrorBoundary({ error, reset }: ErrorBoundaryProps
           <button
             type="button"
             onClick={() => reset()}
-            className="flex h-[64px] sm:h-[68px] items-center justify-center gap-2.5 rounded-full bg-[var(--accent)] px-8 text-base font-extrabold text-[var(--accent-ink)] shadow-[0_12px_36px_rgba(139,207,34,0.3)] transition-all duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)]"
+            className="flex h-[64px] sm:h-[68px] items-center justify-center gap-2.5 rounded-full bg-[var(--accent)] px-8 text-base font-extrabold text-[var(--accent-ink)] transition-colors duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)]"
           >
             <RotateCcw size={18} />
             <span>Try Again</span>

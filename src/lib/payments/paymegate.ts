@@ -48,19 +48,9 @@ export interface PaymegateWebhookPayload {
 export async function createPaymegateOrder(
   params: PaymegateCreateOrderParams
 ): Promise<PaymegateOrderResponse> {
-  const apiKey = process.env.PAYMEGATE_API_KEY;
-  const staticCheckoutUrl = process.env.PAYMEGATE_CHECKOUT_URL;
+  const apiKey = process.env.PAYMEGATE_API_KEY?.trim();
 
-  // Fallback to static hosted checkout link if no API key is provided
   if (!apiKey) {
-    if (staticCheckoutUrl) {
-      return {
-        success: true,
-        orderUUID: 'static_checkout',
-        checkoutUrl: staticCheckoutUrl,
-        externalId: params.orderId,
-      };
-    }
     throw new Error('PAYMEGATE_API_KEY is not configured.');
   }
 
@@ -84,50 +74,34 @@ export async function createPaymegateOrder(
     },
   };
 
-  try {
-    const res = await fetch('https://api.paymegate.com/v1/orders', {
-      method: 'POST',
-      headers: {
-        'X-API-Key': apiKey,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body),
-    });
+  const res = await fetch('https://api.paymegate.com/v1/orders', {
+    method: 'POST',
+    headers: {
+      'X-API-Key': apiKey,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
 
-    if (!res.ok) {
-      const errText = await res.text();
-      console.warn(`[paymegate] Order creation API failed (${res.status}): ${errText}`);
-      // If API fails, fall back to configured static checkout URL if available
-      if (staticCheckoutUrl) {
-        return {
-          success: true,
-          orderUUID: 'static_checkout_fallback',
-          checkoutUrl: staticCheckoutUrl,
-          externalId: params.orderId,
-        };
-      }
-      throw new Error(`Paymegate API responded with ${res.status}: ${errText}`);
-    }
-
-    const data = await res.json();
-    return {
-      success: true,
-      orderUUID: data?.data?.orderUUID || data?.orderUUID,
-      checkoutUrl: data?.data?.checkoutUrl || data?.checkoutUrl || staticCheckoutUrl,
-      externalId: data?.data?.externalId || params.orderId,
-    };
-  } catch (error) {
-    console.error('[paymegate] Error communicating with Paymegate API:', error);
-    if (staticCheckoutUrl) {
-      return {
-        success: true,
-        orderUUID: 'static_checkout_fallback',
-        checkoutUrl: staticCheckoutUrl,
-        externalId: params.orderId,
-      };
-    }
-    throw error;
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Paymegate API responded with ${res.status}: ${errText}`);
   }
+
+  const data = await res.json();
+  const checkoutUrl = data?.data?.checkoutUrl || data?.checkoutUrl;
+  const orderUUID = data?.data?.orderUUID || data?.orderUUID;
+
+  if (!checkoutUrl) {
+    throw new Error('Paymegate API did not return a checkoutUrl.');
+  }
+
+  return {
+    success: true,
+    orderUUID,
+    checkoutUrl,
+    externalId: data?.data?.externalId || params.orderId,
+  };
 }
 
 /**

@@ -50,9 +50,7 @@ body {
   min-width: 320px;
   overflow-x: hidden;
   width: 100%;
-  background:
-    radial-gradient(circle at 12% 0%, rgba(139, 207, 34, 0.14), transparent 32rem),
-    var(--background);
+  background: var(--background);
   color: var(--foreground);
   overscroll-behavior-x: none;
   transition: background-color 240ms ease, color 240ms ease;

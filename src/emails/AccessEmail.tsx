@@ -112,7 +112,6 @@ const button = {
   textAlign: 'center' as const,
   display: 'inline-block',
   padding: '18px 40px',
-  boxShadow: '0 8px 24px rgba(139, 207, 34, 0.35)',
 };
 
 const hr = {

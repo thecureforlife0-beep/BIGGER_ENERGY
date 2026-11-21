@@ -21,7 +21,7 @@ export function AccessDenied({ reason }: { reason: string | null }) {
         </p>
         <a
           href="/"
-          className="mt-7 inline-flex h-[68px] sm:h-[72px] items-center justify-center rounded-full bg-[var(--accent)] px-8 text-base font-extrabold text-[var(--accent-ink)] shadow-[0_16px_40px_rgba(139,207,34,0.3)] transition-all duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)]"
+          className="mt-7 inline-flex h-[68px] sm:h-[72px] items-center justify-center rounded-full bg-[var(--accent)] px-8 text-base font-extrabold text-[var(--accent-ink)] transition-colors duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)]"
         >
           Return to the course page
         </a>

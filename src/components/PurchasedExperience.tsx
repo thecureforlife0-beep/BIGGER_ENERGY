@@ -110,7 +110,7 @@ export function PurchasedExperience({ courseId }: { courseId: string }) {
             )}
           </div>
         ) : (
-          <div className="grid min-h-[300px] place-items-center bg-[radial-gradient(ellipse_at_top,rgba(139,207,34,0.12),transparent_68%)] p-7 text-center sm:min-h-[440px] sm:p-12">
+          <div className="grid min-h-[300px] place-items-center bg-[var(--surface)] p-7 text-center sm:min-h-[440px] sm:p-12">
             <div className="max-w-[560px]">
               <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-[var(--background)] text-[var(--accent-strong)] shadow-sm">
                 <Play size={26} className="ml-1" fill="currentColor" />
@@ -127,7 +127,7 @@ export function PurchasedExperience({ courseId }: { courseId: string }) {
                 <button
                   type="button"
                   onClick={() => setIsPlaying(true)}
-                  className="inline-flex h-[72px] sm:h-[76px] items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-10 text-base font-extrabold text-[var(--accent-ink)] shadow-[0_20px_50px_rgba(139,207,34,0.3)] transition-all duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)]"
+                  className="inline-flex h-[72px] sm:h-[76px] items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-10 text-base font-extrabold text-[var(--accent-ink)] transition-colors duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)]"
                 >
                   <Play size={18} fill="currentColor" /> Start Lesson
                 </button>

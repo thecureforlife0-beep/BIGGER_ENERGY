@@ -83,7 +83,7 @@ export function TeaserVideoPlayer({ onUnlockClick }: TeaserVideoPlayerProps) {
 
               {/* Pulsing Play Button */}
               <div className="mt-6 flex flex-col items-center justify-center gap-3">
-                <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-[var(--accent)] text-[var(--accent-ink)] shadow-[0_0_50px_rgba(139,207,34,0.6)] transition-all duration-300 group-hover:scale-110 sm:h-20 sm:w-20">
+                <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-[var(--accent)] text-[var(--accent-ink)] transition-transform duration-300 group-hover:scale-110 sm:h-20 sm:w-20">
                   <Play size={28} fill="currentColor" className="ml-1" />
                 </div>
                 <span className="text-xs font-bold uppercase tracking-[0.18em] text-white/90">
@@ -109,7 +109,7 @@ export function TeaserVideoPlayer({ onUnlockClick }: TeaserVideoPlayerProps) {
           <button
             type="button"
             onClick={onUnlockClick}
-            className="flex h-[68px] sm:h-[72px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 text-sm sm:text-base font-extrabold text-[var(--accent-ink)] shadow-[0_16px_40px_rgba(139,207,34,0.28)] transition-all duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)] sm:w-auto"
+            className="flex h-[68px] sm:h-[72px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 text-sm sm:text-base font-extrabold text-[var(--accent-ink)] transition-colors duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)] sm:w-auto"
           >
             <span>Unlock Full Video (${storefrontContent.product.priceUsd.toFixed(2)})</span>
             <ArrowRight size={18} strokeWidth={2.4} />

@@ -41,7 +41,7 @@ export function Header() {
     >
       <div className="mx-auto flex h-[76px] w-full max-w-[1920px] items-center justify-between px-6 sm:px-12 lg:px-20">
         <a href="/" className="group flex min-h-11 items-center gap-3.5" aria-label="Chad Kermit home">
-          <div className="relative h-11 w-11 overflow-hidden rounded-full border-2 border-[var(--accent)] shadow-[0_8px_24px_rgba(139,207,34,0.3)] transition-transform group-hover:scale-105">
+          <div className="relative h-11 w-11 overflow-hidden rounded-full border-2 border-[var(--accent)] transition-transform group-hover:scale-105">
             <Image
               src="/images/chad-avatar.png"
               alt="Chad Kermit"
