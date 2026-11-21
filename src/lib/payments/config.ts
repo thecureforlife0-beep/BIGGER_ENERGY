@@ -39,10 +39,10 @@ export const paymentConfig: PaymentConfig = {
       (isPaymegate ? 'Paymegate' : 'Alternative Checkout'),
     badge:
       process.env.NEXT_PUBLIC_PROVIDER_B_BADGE ??
-      (isPaymegate ? 'Cards · Solana · BTC · EVM' : 'Direct Crypto / Card Rail'),
+      (isPaymegate ? 'Cards · Apple Pay · Google Pay · Crypto' : 'Direct Crypto / Card Rail'),
     chains:
       process.env.NEXT_PUBLIC_PROVIDER_B_CHAINS ??
-      (isPaymegate ? 'Solana · Base · BTC · ETH' : 'Arbitrum · Base · Solana · ETH'),
+      (isPaymegate ? 'Visa · Mastercard · Coinbase · Crypto' : 'Arbitrum · Base · Solana · ETH'),
     publicKey: process.env.NEXT_PUBLIC_PROVIDER_B_PUBLIC_KEY ?? '',
     paymentUrl: providerBPaymentUrl,
     mode: process.env.NEXT_PUBLIC_PROVIDER_B_MODE === 'live' ? 'live' : 'test',
@@ -52,17 +52,7 @@ export const paymentConfig: PaymentConfig = {
 export function getAvailablePaymentProviders(): PaymentProviderOption[] {
   const options: PaymentProviderOption[] = [];
 
-  if (paymentConfig.blunt.enabled) {
-    options.push({
-      id: 'blunt',
-      name: 'Blunt.cash',
-      badge: 'Direct Crypto Checkout',
-      chains: 'Arbitrum · Base · Solana · ETH',
-      checkoutUrl: paymentConfig.blunt.paymentUrl,
-      isPrimary: activeMode !== 'provider_b',
-    });
-  }
-
+  // Paymegate (provider_b) is Primary by default when enabled alongside Blunt.cash
   if (paymentConfig.providerB.enabled && paymentConfig.providerB.paymentUrl) {
     options.push({
       id: 'provider_b',
@@ -70,7 +60,19 @@ export function getAvailablePaymentProviders(): PaymentProviderOption[] {
       badge: paymentConfig.providerB.badge,
       chains: paymentConfig.providerB.chains,
       checkoutUrl: paymentConfig.providerB.paymentUrl,
-      isPrimary: activeMode === 'provider_b',
+      isPrimary: activeMode !== 'blunt',
+    });
+  }
+
+  // Blunt.cash is Secondary direct crypto rail (or Primary only if activeMode === 'blunt')
+  if (paymentConfig.blunt.enabled) {
+    options.push({
+      id: 'blunt',
+      name: 'Blunt.cash',
+      badge: 'Direct Crypto Checkout',
+      chains: 'Arbitrum · Base · Solana · ETH',
+      checkoutUrl: paymentConfig.blunt.paymentUrl,
+      isPrimary: activeMode === 'blunt',
     });
   }
 

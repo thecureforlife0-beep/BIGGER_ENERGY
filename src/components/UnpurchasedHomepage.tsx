@@ -3,10 +3,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   ArrowRight,
+  ArrowUpRight,
   Check,
   ExternalLink,
   Flame,
   LockKeyhole,
+  Mail,
   Play,
   ShieldCheck,
   Star,
@@ -152,7 +154,8 @@ export function UnpurchasedHomepage() {
                   className="flex items-center justify-center gap-1.5 rounded-full border border-[var(--line)] bg-[var(--surface-strong)]/80 py-2.5 px-4 text-xs font-bold text-[var(--foreground)] transition-colors duration-200 hover:border-[var(--accent)] hover:text-[var(--accent-strong)] active:scale-[0.98]"
                 >
                   <Zap size={14} className="fill-[var(--accent-strong)] text-[var(--accent-strong)]" />
-                  <span>Direct Crypto Checkout: pay.blunt.cash ↗</span>
+                  <span>Direct Crypto Backup: Blunt.cash</span>
+                  <ArrowUpRight size={14} strokeWidth={2.4} />
                 </a>
               </div>
             </div>
@@ -193,11 +196,13 @@ export function UnpurchasedHomepage() {
                   {storefrontContent.course.summary}
                 </p>
                 <div className="rounded-3xl border border-[var(--line)] bg-[var(--surface)] p-6 sm:p-8">
-                  <p className="font-semibold text-[var(--foreground)]">
-                    {storefrontContent.course.socialProofClaim}
+                  <p className="flex items-start gap-2.5 font-semibold text-[var(--foreground)]">
+                    <Flame size={18} className="mt-1 shrink-0 text-[var(--accent-strong)]" />
+                    <span>{storefrontContent.course.socialProofClaim}</span>
                   </p>
-                  <p className="mt-4 text-sm leading-7 text-[var(--muted)] sm:text-base">
-                    {storefrontContent.course.callToAction}
+                  <p className="mt-4 flex items-start gap-2.5 text-sm leading-7 text-[var(--muted)] sm:text-base">
+                    <Mail size={16} className="mt-1.5 shrink-0 text-[var(--accent-strong)]" />
+                    <span>{storefrontContent.course.callToAction}</span>
                   </p>
                 </div>
               </div>
@@ -228,7 +233,7 @@ export function UnpurchasedHomepage() {
                     <span>Unlock Full Video (${storefrontContent.product.priceUsd.toFixed(2)})</span>
                   </button>
                   <p className="mt-3 text-center text-xs text-[var(--muted)]">
-                    Direct crypto settlement. Instant delivery to your email.
+                    Cards, Apple Pay, Google Pay &amp; Crypto · Instant delivery to your email.
                   </p>
                 </div>
               </div>

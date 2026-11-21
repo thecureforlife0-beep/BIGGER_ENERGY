@@ -41,6 +41,11 @@ export interface PaymegateWebhookPayload {
   paidAt?: string;
 }
 
+// Paymegate POST /v1/orders enforces maxLength: 512 on `description`.
+// This 505-char summary preserves every key point & legal disclaimer cleanly.
+export const PAYMEGATE_ORDER_DESCRIPTION =
+  'BIGGER ENERGY is a private digital video experience from the Chad-Kermit universe — confident, mythic, and built for presence, focus, and personal energy. Includes: preview before purchase, secure full digital video access after confirmed payment, private access link, and instant digital delivery (no physical shipping). Intended for the purchaser only — do not redistribute or share. Digital entertainment & personal-development experience; not medical, psychological, financial, or professional advice.';
+
 /**
  * Creates an order on Paymegate via their Merchant API (POST /v1/orders).
  * Returns the checkoutUrl to redirect the customer to.
@@ -56,13 +61,22 @@ export async function createPaymegateOrder(
 
   const amountStr = (params.amount ?? 22.3).toFixed(2);
   const currency = params.currency ?? 'USD';
+  const rawBaseUrl = (process.env.NEXT_PUBLIC_BASE_URL ?? 'https://biggerenergy.vercel.app').trim();
+  const httpsBaseUrl = rawBaseUrl.startsWith('https://')
+    ? rawBaseUrl.replace(/\/+$/, '')
+    : 'https://biggerenergy.vercel.app';
 
   const body = {
     externalId: params.orderId,
     amount: amountStr,
     currency,
     paymentMethodsKeys: ['*'],
-    backUrl: params.backUrl ?? `${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/access?orderId=${params.orderId}`,
+    description: PAYMEGATE_ORDER_DESCRIPTION,
+    productImageUrl: `${httpsBaseUrl}/images/hero-4.png`,
+    backUrl:
+      params.backUrl && params.backUrl.startsWith('https://')
+        ? params.backUrl
+        : `${httpsBaseUrl}/access?orderId=${params.orderId}`,
     customer: {
       email: params.email || 'customer@biggerenergy.com',
       fullName: params.fullName || 'Bigger Energy Customer',

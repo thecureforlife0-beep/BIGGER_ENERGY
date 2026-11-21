@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowRight, Check, ExternalLink, Loader2, LockKeyhole, ShieldCheck, X, Zap } from 'lucide-react';
+import { ArrowRight, Check, Clock, CreditCard, ExternalLink, Loader2, LockKeyhole, Mail, ShieldCheck, X, Zap } from 'lucide-react';
 import { storefrontContent } from '@/lib/course-content';
 import { getAvailablePaymentProviders } from '@/lib/payments/config';
 
@@ -203,52 +203,98 @@ export const AntechamberModal = ({
             </div>
 
             <p className="mt-6 max-w-[560px] text-sm leading-6 text-[var(--muted)]">
-              Pay directly from your wallet with crypto. Access is issued the moment payment confirms on-chain.
+              Pay instantly with Card, Apple Pay, Google Pay, or Crypto via Paymegate, or settle directly on-chain with Blunt.cash. Private stream access unlocks upon confirmation.
             </p>
 
             <div className="mt-4 flex items-start gap-2.5 rounded-2xl bg-[var(--background)] px-4 py-3.5">
-              <span className="mt-0.5 text-[var(--accent-strong)] text-base leading-none">⏱</span>
+              <Clock size={16} strokeWidth={2.2} className="mt-0.5 shrink-0 text-[var(--accent-strong)]" />
               <p className="text-xs leading-5 text-[var(--muted)]">
-                <span className="font-semibold text-[var(--foreground)]">30-minute payment window.</span>{' '}
-                Your crypto checkout session stays open for 30 minutes. Have your wallet ready before you open checkout — if the window expires, simply start again.
+                <span className="font-semibold text-[var(--foreground)]">30-minute checkout window.</span>{' '}
+                Your payment quote stays locked for 30 minutes. If a session expires, simply open a fresh checkout.
               </p>
             </div>
 
             {/* PRIMARY DIRECT CHECKOUT OPTION */}
             <div className="mt-7 rounded-3xl border border-[var(--line)] bg-[var(--background)] p-6 text-left">
-              <div className="flex items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-[rgba(139,207,34,0.15)] px-3 py-1 text-[11px] font-bold text-[var(--accent-strong)]">
-                  <Zap size={13} className="fill-current" /> {primaryProvider.badge}
+                  {primaryProvider.id === 'provider_b' ? (
+                    <CreditCard size={13} strokeWidth={2.2} />
+                  ) : (
+                    <Zap size={13} className="fill-current" />
+                  )}
+                  {primaryProvider.badge}
                 </span>
                 <span className="text-xs font-semibold text-[var(--muted)]">{primaryProvider.chains}</span>
               </div>
 
               <h3 className="mt-3 text-lg font-bold text-[var(--foreground)]">
-                Pay Directly on {primaryProvider.name}
+                Pay via {primaryProvider.name} (Recommended)
               </h3>
               <p className="mt-1 text-xs leading-relaxed text-[var(--muted)]">
-                Direct merchant settlement with zero intermediary freeze risk. Enter your delivery email on checkout to receive your private stream link upon confirmation.
+                BIGGER ENERGY is a private digital video experience from the Chad-Kermit universe — confident, playful, mythic, and built for presence, focus, and personal energy.
               </p>
 
+              <ul className="mt-4 space-y-1.5 text-xs text-[var(--muted)]">
+                <li className="flex items-center gap-2">
+                  <Check size={13} strokeWidth={2.8} className="shrink-0 text-[var(--accent-strong)]" />
+                  <span>Secure access to the full digital video after confirmed payment</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check size={13} strokeWidth={2.8} className="shrink-0 text-[var(--accent-strong)]" />
+                  <span>Private customer access link delivered directly to your inbox</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check size={13} strokeWidth={2.8} className="shrink-0 text-[var(--accent-strong)]" />
+                  <span>Digital delivery only · No physical product or shipping</span>
+                </li>
+              </ul>
+
               {primaryProvider.id === 'provider_b' ? (
-                <button
-                  type="button"
-                  onClick={handlePaymegateCheckout}
-                  disabled={paymegateLoading}
-                  className="mt-5 flex h-[72px] sm:h-[76px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 text-center text-base sm:text-lg font-extrabold tracking-tight text-[var(--accent-ink)] transition-colors duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {paymegateLoading ? (
-                    <>
-                      <Loader2 size={20} className="animate-spin" />
-                      <span>Opening {primaryProvider.name}…</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>Open {primaryProvider.name} Checkout (${storefrontContent.product.priceUsd.toFixed(2)})</span>
-                      <ExternalLink size={20} strokeWidth={2.4} />
-                    </>
+                <>
+                  {onEmailChange && (
+                    <div className="mt-4">
+                      <label
+                        htmlFor="primary-checkout-email"
+                        className="mb-1.5 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--muted)]"
+                      >
+                        <Mail size={12} className="text-[var(--accent-strong)]" />
+                        <span>Delivery Email (for your private access link)</span>
+                      </label>
+                      <input
+                        id="primary-checkout-email"
+                        type="email"
+                        placeholder="you@example.com"
+                        value={email}
+                        onChange={(e) => onEmailChange(e.target.value)}
+                        disabled={paymegateLoading}
+                        className="w-full rounded-2xl border border-[var(--line)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted)]/50 focus:border-[var(--accent)] focus:outline-none"
+                      />
+                    </div>
                   )}
-                </button>
+
+                  <button
+                    type="button"
+                    onClick={handlePaymegateCheckout}
+                    disabled={paymegateLoading}
+                    className="mt-5 flex h-[72px] sm:h-[76px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 text-center text-base sm:text-lg font-extrabold tracking-tight text-[var(--accent-ink)] transition-colors duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {paymegateLoading ? (
+                      <>
+                        <Loader2 size={20} className="animate-spin" />
+                        <span>Opening {primaryProvider.name}…</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Open {primaryProvider.name} Checkout (${storefrontContent.product.priceUsd.toFixed(2)})</span>
+                        <ExternalLink size={20} strokeWidth={2.4} />
+                      </>
+                    )}
+                  </button>
+                  {paymegateError && (
+                    <p className="mt-2.5 text-xs font-medium text-red-400">{paymegateError}</p>
+                  )}
+                </>
               ) : (
                 <a
                   href={primaryProvider.checkoutUrl || storefrontContent.product.paymentUrl}
@@ -260,6 +306,10 @@ export const AntechamberModal = ({
                   <ExternalLink size={20} strokeWidth={2.4} />
                 </a>
               )}
+
+              <p className="mt-3.5 text-[11px] leading-relaxed text-[var(--muted)]/80">
+                Intended for the purchaser only — do not redistribute, repost, or share your access link. Digital entertainment &amp; personal-development experience; not medical, psychological, financial, or professional advice.
+              </p>
             </div>
 
             {/* SECONDARY / ALTERNATIVE PAYMENT RAILS (If Configured) */}

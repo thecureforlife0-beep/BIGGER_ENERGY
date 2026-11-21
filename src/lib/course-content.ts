@@ -16,9 +16,9 @@ export const storefrontContent = {
     summary:
       'Let’s cut through the noise. No pills. No surgery. No awkward gadgets. No sketchy exercises. Just a science-backed method that’s helping thousands of men in 2025 get serious results—safely and naturally.',
     socialProofClaim:
-      'We’re talking about a straightforward 2-step system that’s now been tested by over 6,700 men, with real, visible growth. It’s based on human biology, not hype. 🔥',
+      'We’re talking about a straightforward 2-step system that’s now been tested by over 6,700 men, with real, visible growth. It’s based on human biology, not hype.',
     callToAction:
-      'Get the full 11-minute video for how it all works—no fluff, no hard sell, just clear steps that deliver. Have questions or want to share your results? I’m always on Instagram. Shoot me a message—I’ll personally reply. 📩 Take the first step.',
+      'Get the full 11-minute video for how it all works—no fluff, no hard sell, just clear steps that deliver. Have questions or want to share your results? I’m always on Instagram. Shoot me a message—I’ll personally reply. Take the first step.',
     duration: '11-minute video',
     format: 'Private masterclass stream',
     includes: [
@@ -44,7 +44,7 @@ export const storefrontContent = {
       id: 1,
       name: 'John.pact2',
       review:
-        'Thought this was useless but had it for a week 2 and I can definitely feel and see some change. I salute ✅',
+        'Thought this was useless but had it for a week 2 and I can definitely feel and see some change. I salute.',
       verified: true,
       rating: 5,
       date: '2 days ago',
