@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
-import { Resend } from 'resend';
 import { redis } from '@/lib/redis';
 import { storefrontContent } from '@/lib/course-content';
+import { buildAccessEmailHtml, dispatchEmail } from '@/lib/email/sendAccessEmail';
 
 const FulfillmentRequest = z.object({
   fulfillmentId: z.string().min(1).max(128).optional(),
@@ -57,44 +57,27 @@ export async function POST(request: NextRequest) {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const accessUrl = `${baseUrl}/access?courseId=${encodeURIComponent(fulfillmentId)}&token=${encodeURIComponent(token)}`;
 
-    // 4. Send Email via Resend
-    const resendKey = process.env.RESEND_API_KEY;
-    const fromAddress = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
-
-    if (resendKey) {
-      const resend = new Resend(resendKey);
-      const { error: sendError } = await resend.emails.send({
-        from: `Chad Kermit <${fromAddress}>`,
+    // 4. Send Email via configured transport (Gmail SMTP / Custom SMTP / Brevo / Resend)
+    try {
+      const result = await dispatchEmail({
         to: userEmail,
         subject: `Your Private Access: ${storefrontContent.course.title}`,
-        html: `
-          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px 20px; color: #111; background-color: #f9f9f9; border-radius: 16px;">
-            <div style="background-color: #ffffff; padding: 32px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
-              <p style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; color: #65a30d; margin: 0 0 12px 0;">Private Entitlement Confirmed</p>
-              <h1 style="font-size: 24px; font-weight: 700; margin: 0 0 16px 0; color: #000;">Your access is ready.</h1>
-              <p style="font-size: 15px; line-height: 1.6; color: #555; margin: 0 0 24px 0;">
-                Your order has been verified. Click below to enter the private student portal and stream your lesson.
-              </p>
-              <a href="${accessUrl}" style="display: inline-block; background-color: #8bcf22; color: #000; font-weight: 700; text-decoration: none; padding: 18px 40px; border-radius: 9999px; font-size: 15px;">
-                Open Private Lesson
-              </a>
-              <p style="margin: 32px 0 0 0; font-size: 12px; color: #888; border-top: 1px solid #eee; padding-top: 16px;">
-                Bookmark this email. This link remains valid for 365 days.
-              </p>
-            </div>
-          </div>
-        `,
+        html: buildAccessEmailHtml(
+          accessUrl,
+          'Your order has been verified. Click below to enter the private student portal and stream your lesson.',
+        ),
       });
-
-      if (sendError) {
-        console.error('[fulfillment] Resend email delivery failed', sendError);
-        return NextResponse.json({ error: 'Failed to send access email via Resend', accessUrl }, { status: 500 });
+      if (result.provider === 'dev_log') {
+        console.info(`[fulfillment:dev] Email transport not configured. Access URL: ${accessUrl}`);
       }
-    } else {
-      console.info(`[fulfillment:dev] Resend key absent. Access URL: ${accessUrl}`);
+      return NextResponse.json({ success: true, accessUrl, emailProvider: result.provider });
+    } catch (sendError) {
+      console.error('[fulfillment] Email delivery failed', sendError);
+      return NextResponse.json(
+        { error: 'Failed to send access email', accessUrl },
+        { status: 500 },
+      );
     }
-
-    return NextResponse.json({ success: true, accessUrl });
   } catch (error) {
     console.error('[fulfillment] request failed', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

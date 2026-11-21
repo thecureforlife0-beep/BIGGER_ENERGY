@@ -33,7 +33,9 @@ export const storefrontContent = {
     teaserPlaybackId:
       process.env.NEXT_PUBLIC_MUX_TEASER_PLAYBACK_ID ||
       'ac3dvpgq7mCwBZaa7eQQd7EhtvlFzc5xEY9j3c02W4DE',
-    fullVideoPlaybackId: 'VcWXnOIk020102fKrEP351Fi52rHUNXOiJERaR7KEdOFKM',
+    fullVideoPlaybackId:
+      process.env.MUX_PLAYBACK_ID ||
+      'tNGocfMgHTDM2201au01Q9mtKRc02qN8tkfUFcvFY01NOEo',
     teaserThumbnailUrl: '/images/teaser-thumbnail.png',
     heroImageSunset: '/images/hero-4.png',
   },

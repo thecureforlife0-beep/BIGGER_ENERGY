@@ -1,12 +1,24 @@
 import { storefrontContent } from '@/lib/course-content';
 import type { PaymentConfig, PaymentProviderOption, ActiveProviderMode } from './types';
 
-const rawMode = (process.env.NEXT_PUBLIC_ACTIVE_PAYMENT_PROVIDER ?? 'blunt').toLowerCase();
+const rawMode = (
+  process.env.NEXT_PUBLIC_ACTIVE_PAYMENT_PROVIDER ??
+  (process.env.PAYMEGATE_CHECKOUT_URL || process.env.PAYMEGATE_API_KEY ? 'both' : 'blunt')
+).toLowerCase();
 const activeMode: ActiveProviderMode =
   rawMode === 'provider_b' || rawMode === 'both' ? rawMode : 'blunt';
 
 const rawChains = process.env.NEXT_PUBLIC_BLUNT_ACCEPTED_CHAINS ?? 'base,sol';
 const acceptedChains = rawChains.split(',').map((s) => s.trim()).filter(Boolean);
+
+const providerBPaymentUrl =
+  process.env.NEXT_PUBLIC_PROVIDER_B_PAYMENT_URL ||
+  process.env.PAYMEGATE_CHECKOUT_URL ||
+  'https://www.paymegate.com/checkout/884a31cd-6589-449e-90a8-da36aa5469ef';
+
+const isPaymegate =
+  (process.env.SECONDARY_PAYMENT_PROVIDER ?? '').toLowerCase() === 'paymegate' ||
+  Boolean(process.env.PAYMEGATE_CHECKOUT_URL || process.env.PAYMEGATE_API_KEY);
 
 export const paymentConfig: PaymentConfig = {
   activeMode,
@@ -22,11 +34,17 @@ export const paymentConfig: PaymentConfig = {
   },
   providerB: {
     enabled: activeMode === 'provider_b' || activeMode === 'both',
-    name: process.env.NEXT_PUBLIC_PROVIDER_B_NAME ?? 'Alternative Checkout',
-    badge: process.env.NEXT_PUBLIC_PROVIDER_B_BADGE ?? 'Direct Crypto / Card Rail',
-    chains: process.env.NEXT_PUBLIC_PROVIDER_B_CHAINS ?? 'Arbitrum · Base · Solana · ETH',
+    name:
+      process.env.NEXT_PUBLIC_PROVIDER_B_NAME ??
+      (isPaymegate ? 'Paymegate' : 'Alternative Checkout'),
+    badge:
+      process.env.NEXT_PUBLIC_PROVIDER_B_BADGE ??
+      (isPaymegate ? 'Cards · Solana · BTC · EVM' : 'Direct Crypto / Card Rail'),
+    chains:
+      process.env.NEXT_PUBLIC_PROVIDER_B_CHAINS ??
+      (isPaymegate ? 'Solana · Base · BTC · ETH' : 'Arbitrum · Base · Solana · ETH'),
     publicKey: process.env.NEXT_PUBLIC_PROVIDER_B_PUBLIC_KEY ?? '',
-    paymentUrl: process.env.NEXT_PUBLIC_PROVIDER_B_PAYMENT_URL ?? '',
+    paymentUrl: providerBPaymentUrl,
     mode: process.env.NEXT_PUBLIC_PROVIDER_B_MODE === 'live' ? 'live' : 'test',
   },
 };
