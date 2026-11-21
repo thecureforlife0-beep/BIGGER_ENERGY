@@ -14,22 +14,22 @@ const Body = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const parsed = Body.safeParse(await req.json().catch(() => ({})));
-  if (!parsed.success) {
-    return NextResponse.json({ error: 'invalid_request' }, { status: 400 });
-  }
-
-  const sessionId = parsed.data.sessionId ?? randomUUID();
-  const resumed = await findOpenOrderBySession(sessionId);
-  const order = resumed ?? (await createOrder(sessionId, storefrontContent.product.priceUsd));
-
   try {
+    const parsed = Body.safeParse(await req.json().catch(() => ({})));
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'invalid_request' }, { status: 400 });
+    }
+
+    const sessionId = parsed.data.sessionId ?? randomUUID();
+    const resumed = await findOpenOrderBySession(sessionId);
+    const order = resumed ?? (await createOrder(sessionId, storefrontContent.product.priceUsd));
+
     const paymegateRes = await createPaymegateOrder({
       orderId: order.id,
       email: parsed.data.email,
       amount: order.amountUsd,
       currency: storefrontContent.product.currency,
-      backUrl: `${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/access?orderId=${order.id}`,
+      backUrl: `${process.env.NEXT_PUBLIC_BASE_URL ?? 'https://biggerenergy.vercel.app'}/access?orderId=${order.id}`,
       metadata: {
         orderId: order.id,
         courseId: storefrontContent.course.id,
@@ -45,9 +45,15 @@ export async function POST(req: NextRequest) {
       resumed: Boolean(resumed),
     });
   } catch (err) {
-    console.error('[paymegate] Failed to initialize checkout:', err);
+    const message = err instanceof Error ? err.message : 'Unknown server error';
+    console.error('[paymegate] Failed to initialize checkout:', message);
     return NextResponse.json(
-      { error: 'Paymegate checkout is temporarily unavailable. Please try Blunt.cash or retry.' },
+      {
+        error: 'paymegate_checkout_unavailable',
+        detail: message.includes('Redis')
+          ? 'Storage backend (Upstash Redis) is not configured on this deployment.'
+          : 'Paymegate checkout is temporarily unavailable. Please retry.',
+      },
       { status: 502 },
     );
   }

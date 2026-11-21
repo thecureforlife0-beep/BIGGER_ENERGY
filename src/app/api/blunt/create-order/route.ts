@@ -12,25 +12,39 @@ const Body = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const parsed = Body.safeParse(await req.json().catch(() => ({})));
-  if (!parsed.success) {
-    return NextResponse.json({ error: 'invalid_request' }, { status: 400 });
+  try {
+    const parsed = Body.safeParse(await req.json().catch(() => ({})));
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'invalid_request' }, { status: 400 });
+    }
+
+    const sessionId = parsed.data.sessionId ?? randomUUID();
+
+    // Resume rather than duplicate on double-tap / sheet re-open
+    const resumed = await findOpenOrderBySession(sessionId);
+    const order = resumed ?? (await createOrder(sessionId, PRODUCT.priceUsd));
+
+    return NextResponse.json({
+      orderId: order.id,
+      sessionId,
+      amountUsd: order.amountUsd, // server-derived, never client-sent
+      courseId: order.courseId,
+      publicKey: BLUNT.publicKey,
+      chains: BLUNT.acceptedChains,
+      mode: BLUNT.mode,
+      resumed: Boolean(resumed),
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown server error';
+    console.error('[blunt/create-order] failed:', message);
+    return NextResponse.json(
+      {
+        error: 'order_creation_failed',
+        detail: message.includes('Redis')
+          ? 'Storage backend (Upstash Redis) is not configured on this deployment.'
+          : 'Unable to create order.',
+      },
+      { status: 503 },
+    );
   }
-
-  const sessionId = parsed.data.sessionId ?? randomUUID();
-
-  // Resume rather than duplicate on double-tap / sheet re-open
-  const resumed = await findOpenOrderBySession(sessionId);
-  const order = resumed ?? (await createOrder(sessionId, PRODUCT.priceUsd));
-
-  return NextResponse.json({
-    orderId: order.id,
-    sessionId,
-    amountUsd: order.amountUsd, // server-derived, never client-sent
-    courseId: order.courseId,
-    publicKey: BLUNT.publicKey,
-    chains: BLUNT.acceptedChains,
-    mode: BLUNT.mode,
-    resumed: Boolean(resumed),
-  });
 }
