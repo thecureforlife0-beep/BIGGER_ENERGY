@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { randomUUID } from 'node:crypto';
 import { storefrontContent } from '@/lib/course-content';
-import { createOrder, findOpenOrderBySession } from '@/lib/orders/store';
+import { createOrder, findOpenOrderBySession, patchOrder } from '@/lib/orders/store';
 import { createPaymegateOrder } from '@/lib/payments/paymegate';
 
 export const runtime = 'nodejs';
@@ -17,12 +17,22 @@ export async function POST(req: NextRequest) {
   try {
     const parsed = Body.safeParse(await req.json().catch(() => ({})));
     if (!parsed.success) {
-      return NextResponse.json({ error: 'invalid_request' }, { status: 400 });
+      return NextResponse.json(
+        {
+          error: 'invalid_request',
+          detail: 'Please enter a valid email address.',
+        },
+        { status: 400 },
+      );
     }
 
     const sessionId = parsed.data.sessionId ?? randomUUID();
     const resumed = await findOpenOrderBySession(sessionId);
     const order = resumed ?? (await createOrder(sessionId, storefrontContent.product.priceUsd));
+
+    if (parsed.data.email && parsed.data.email !== order.email) {
+      await patchOrder(order.id, { email: parsed.data.email });
+    }
 
     const paymegateRes = await createPaymegateOrder({
       orderId: order.id,

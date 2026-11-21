@@ -39,6 +39,12 @@ export const AntechamberModal = ({
 
   const handlePaymegateCheckout = async () => {
     if (paymegateLoading) return;
+    const trimmedEmail = email?.trim() ?? '';
+    if (trimmedEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      setPaymegateError('Please enter a valid email address (or leave it blank to enter it on Paymegate).');
+      return;
+    }
+
     setPaymegateError(null);
     setPaymegateLoading(true);
     try {
@@ -46,12 +52,12 @@ export const AntechamberModal = ({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: email?.trim() ? email.trim() : undefined,
+          email: trimmedEmail ? trimmedEmail : undefined,
         }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data?.checkoutUrl) {
-        throw new Error(data?.error || 'Could not initialize Paymegate checkout.');
+        throw new Error(data?.detail || data?.error || 'Could not initialize Paymegate checkout.');
       }
       window.location.assign(data.checkoutUrl);
     } catch (err) {

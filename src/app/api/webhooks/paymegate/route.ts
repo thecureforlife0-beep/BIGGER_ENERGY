@@ -25,15 +25,18 @@ export async function POST(req: NextRequest) {
   const timestamp = req.headers.get('x-paymegate-timestamp');
   const eventId = req.headers.get('x-paymegate-event-id');
   const eventType = req.headers.get('x-paymegate-event');
-  const secret = process.env.PAYMEGATE_WEBHOOK_SECRET;
+  const secret = process.env.PAYMEGATE_WEBHOOK_SECRET?.trim();
 
-  // 2. Signature verification if secret is configured
-  if (secret) {
-    const isValid = verifyPaymegateSignature(rawBody, timestamp, signature, secret);
-    if (!isValid) {
-      console.warn('[paymegate] Invalid webhook signature or timestamp drift');
-      return NextResponse.json({ error: 'invalid_signature' }, { status: 401 });
-    }
+  // 2. Fail-closed signature verification: NEVER accept unverified payment webhooks
+  if (!secret) {
+    console.error('[paymegate] PAYMEGATE_WEBHOOK_SECRET is not configured — rejecting webhook fail-closed.');
+    return NextResponse.json({ error: 'webhook_secret_not_configured' }, { status: 503 });
+  }
+
+  const isValid = verifyPaymegateSignature(rawBody, timestamp, signature, secret);
+  if (!isValid) {
+    console.warn('[paymegate] Invalid webhook signature or timestamp drift');
+    return NextResponse.json({ error: 'invalid_signature' }, { status: 401 });
   }
 
   // 3. Parse JSON payload
@@ -46,7 +49,8 @@ export async function POST(req: NextRequest) {
 
   // 4. Verify event type and status
   const type = payload.type || eventType;
-  if (type !== 'order.paid' || payload.status !== 'PAID') {
+  const normalizedStatus = (payload.status || '').toUpperCase();
+  if (type !== 'order.paid' || normalizedStatus !== 'PAID') {
     return NextResponse.json(
       { received: true, ignored: type, status: payload.status },
       { status: 200 }
@@ -66,10 +70,11 @@ export async function POST(req: NextRequest) {
 
   const orderIdFromMeta = payload.metadata?.orderId || payload.externalId;
   const courseId = payload.metadata?.courseId || storefrontContent.course.id;
-  const email = (payload.customerEmail || '').trim();
   const amountUsd = parseFloat(payload.amount || `${storefrontContent.product.priceUsd}`);
 
   let order = orderIdFromMeta ? await getOrder(orderIdFromMeta) : null;
+  const rawEmail = (payload.customerEmail || payload.customer?.email || order?.email || '').trim();
+  const email = rawEmail.toLowerCase() === 'customer@biggerenergy.com' ? '' : rawEmail;
 
   if (!order) {
     if (!email) {
@@ -92,7 +97,7 @@ export async function POST(req: NextRequest) {
   // 6. Update order record
   await patchOrder(activeOrderId, {
     status: 'paid',
-    email,
+    email: email || order.email,
     paymentId: paymentKey,
     paymentIds: [...new Set([...order.paymentIds, paymentKey])],
     amountCrypto: payload.receivedAmount ? parseFloat(payload.receivedAmount) : undefined,
@@ -104,23 +109,29 @@ export async function POST(req: NextRequest) {
   const { created, token } = await issueEntitlement({
     orderId: activeOrderId,
     courseId,
-    email,
+    email: email || order.email || 'buyer@biggerenergy.local',
   });
 
-  // 8. Send delivery email via Resend
-  try {
-    await sendAccessEmail({
+  // 8. Send delivery email via configured SMTP/email transport (skip only if buyer omitted real email)
+  if (email) {
+    try {
+      await sendAccessEmail({
+        orderId: activeOrderId,
+        email,
+        courseId,
+        token,
+      });
+      await patchOrder(activeOrderId, {
+        status: 'fulfilled',
+        fulfilledAt: new Date().toISOString(),
+      });
+    } catch (err) {
+      console.error('[paymegate] Access email delivery failed:', err);
+    }
+  } else {
+    console.warn('[paymegate] Order paid without real customer email; entitlement issued for direct /access?orderId return.', {
       orderId: activeOrderId,
-      email,
-      courseId,
-      token,
     });
-    await patchOrder(activeOrderId, {
-      status: 'fulfilled',
-      fulfilledAt: new Date().toISOString(),
-    });
-  } catch (err) {
-    console.error('[paymegate] Access email delivery failed:', err);
   }
 
   await markEventDone(`pmg_${paymentKey}`);

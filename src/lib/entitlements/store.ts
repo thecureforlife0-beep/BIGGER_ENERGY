@@ -57,3 +57,9 @@ export async function lookupEntitlement(token: string): Promise<Entitlement | nu
   if (new Date(ent.expiresAt).getTime() < Date.now()) return null;
   return ent;
 }
+
+export async function lookupTokenByOrderId(orderId: string): Promise<string | null> {
+  if (!orderId) return null;
+  const token = await redis.get<string>(`ent:token-by-order:${orderId}`);
+  return token && typeof token === 'string' ? token : null;
+}

@@ -31,6 +31,10 @@ export interface PaymegateWebhookPayload {
   receivedAmount?: string;
   receivedCurrency?: string;
   customerEmail?: string;
+  customer?: {
+    email?: string;
+    fullName?: string;
+  };
   externalId?: string;
   metadata?: {
     orderId?: string;
@@ -132,17 +136,25 @@ export function verifyPaymegateSignature(
     return false;
   }
 
-  // Reject events older than 5 minutes (300 seconds) to prevent replay attacks
+  // Reject events older than 5 minutes (300 seconds) or with unparseable timestamps to prevent replay attacks
   const tsNumber = Number(timestamp);
-  if (!isNaN(tsNumber)) {
-    const nowMs = Date.now();
-    // Support both second and millisecond timestamps
-    const tsMs = tsNumber > 1e11 ? tsNumber : tsNumber * 1000;
-    const diffMs = Math.abs(nowMs - tsMs);
-    if (diffMs > 5 * 60 * 1000) {
-      console.warn(`[paymegate] Webhook timestamp outside 5-minute tolerance: diff=${diffMs}ms`);
-      return false;
-    }
+  let tsMs = Number.NaN;
+  if (!Number.isNaN(tsNumber) && Number.isFinite(tsNumber)) {
+    // Support both second and millisecond unix timestamps
+    tsMs = tsNumber > 1e11 ? tsNumber : tsNumber * 1000;
+  } else {
+    tsMs = Date.parse(timestamp);
+  }
+
+  if (Number.isNaN(tsMs)) {
+    console.warn('[paymegate] Webhook rejected due to unparseable timestamp header');
+    return false;
+  }
+
+  const diffMs = Math.abs(Date.now() - tsMs);
+  if (diffMs > 5 * 60 * 1000) {
+    console.warn(`[paymegate] Webhook timestamp outside 5-minute tolerance: diff=${diffMs}ms`);
+    return false;
   }
 
   const payloadToSign = `${timestamp}.${rawBody}`;

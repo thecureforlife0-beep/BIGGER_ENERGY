@@ -43,17 +43,20 @@ function verifySignature(raw: string, header: string | null, secret: string): bo
 
 export async function POST(req: NextRequest) {
   const raw = await req.text();
-  const secret = process.env.PROVIDER_B_WEBHOOK_SECRET ?? '';
+  const secret = process.env.PROVIDER_B_WEBHOOK_SECRET?.trim() ?? '';
 
-  // If secret is set, enforce HMAC signature
-  if (secret) {
-    const sigHeader =
-      req.headers.get('x-provider-signature') ??
-      req.headers.get('x-webhook-signature') ??
-      req.headers.get('signature');
-    if (!verifySignature(raw, sigHeader, secret)) {
-      return NextResponse.json({ error: 'invalid_signature' }, { status: 401 });
-    }
+  // Fail-closed: NEVER accept unverified payment webhooks
+  if (!secret) {
+    console.error('[provider_b] PROVIDER_B_WEBHOOK_SECRET is not configured — rejecting webhook fail-closed.');
+    return NextResponse.json({ error: 'webhook_secret_not_configured' }, { status: 503 });
+  }
+
+  const sigHeader =
+    req.headers.get('x-provider-signature') ??
+    req.headers.get('x-webhook-signature') ??
+    req.headers.get('signature');
+  if (!verifySignature(raw, sigHeader, secret)) {
+    return NextResponse.json({ error: 'invalid_signature' }, { status: 401 });
   }
 
   let json: unknown;
