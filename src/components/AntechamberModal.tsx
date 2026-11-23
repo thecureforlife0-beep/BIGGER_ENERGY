@@ -1,7 +1,18 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowRight, Check, Clock, CreditCard, ExternalLink, Loader2, LockKeyhole, Mail, ShieldCheck, X, Zap } from 'lucide-react';
+import {
+  Check,
+  Clock,
+  CreditCard,
+  ExternalLink,
+  Instagram,
+  Loader2,
+  Mail,
+  ShieldCheck,
+  X,
+  Zap,
+} from 'lucide-react';
 import { storefrontContent } from '@/lib/course-content';
 import { getAvailablePaymentProviders } from '@/lib/payments/config';
 
@@ -24,7 +35,6 @@ export const AntechamberModal = ({
   isOpen,
   onClose,
   onStartCheckout,
-  isPreparing = false,
   phase = 'idle',
   errorMessage = null,
   embedSlot,
@@ -161,13 +171,13 @@ export const AntechamberModal = ({
             </p>
             <h2
               id="sheet-title"
-              className="max-w-[520px] text-[clamp(1.8rem,7vw,3.2rem)] font-semibold leading-[0.98] tracking-[-0.055em]"
+              className="max-w-[520px] text-[clamp(1.8rem,7vw,3rem)] font-semibold leading-[0.98] tracking-[-0.055em]"
             >
               {phase === 'fulfilled'
                 ? 'Access is ready.'
                 : phase === 'confirming'
                   ? 'Confirming payment…'
-                  : 'Take the method with you.'}
+                  : 'Unlock Instant Access.'}
             </h2>
           </div>
           <button
@@ -183,45 +193,33 @@ export const AntechamberModal = ({
         {/* Phase: IDLE or PREPARING */}
         {(phase === 'idle' || phase === 'preparing') && (
           <>
-            <div className="mt-7 overflow-hidden rounded-[24px] bg-[var(--background)]">
+            <div className="mt-6 overflow-hidden rounded-[24px] bg-[var(--background)]">
               <div
-                className="aspect-[16/7] bg-cover bg-center"
+                className="aspect-[16/6] bg-cover bg-center"
                 style={{
                   backgroundImage: "url('/images/hero-4.png')",
                 }}
                 role="img"
                 aria-label="Bigger Energy Masterclass"
               />
-              <div className="grid gap-4 px-5 py-5 sm:grid-cols-3 sm:px-6">
+              <div className="grid grid-cols-3 gap-3 px-4 py-4 sm:px-6">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--muted)]">01</p>
-                  <p className="mt-2 text-sm font-medium">Leave the noise behind</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--accent-strong)]">01</p>
+                  <p className="mt-1 text-xs font-semibold sm:text-sm">Enter email</p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--muted)]">02</p>
-                  <p className="mt-2 text-sm font-medium">Open direct checkout</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--accent-strong)]">02</p>
+                  <p className="mt-1 text-xs font-semibold sm:text-sm">Pay ${storefrontContent.product.priceUsd.toFixed(2)} once</p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--muted)]">03</p>
-                  <p className="mt-2 text-sm font-medium">Get link by email</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--accent-strong)]">03</p>
+                  <p className="mt-1 text-xs font-semibold sm:text-sm">Watch full video</p>
                 </div>
               </div>
             </div>
 
-            <p className="mt-6 max-w-[560px] text-sm leading-6 text-[var(--muted)]">
-              Pay instantly with Card, Apple Pay, Google Pay, or Crypto via Paymegate, or settle directly on-chain with Blunt.cash. Private stream access unlocks upon confirmation.
-            </p>
-
-            <div className="mt-4 flex items-start gap-2.5 rounded-2xl bg-[var(--background)] px-4 py-3.5">
-              <Clock size={16} strokeWidth={2.2} className="mt-0.5 shrink-0 text-[var(--accent-strong)]" />
-              <p className="text-xs leading-5 text-[var(--muted)]">
-                <span className="font-semibold text-[var(--foreground)]">30-minute checkout window.</span>{' '}
-                Your payment quote stays locked for 30 minutes. If a session expires, simply open a fresh checkout.
-              </p>
-            </div>
-
-            {/* PRIMARY DIRECT CHECKOUT OPTION */}
-            <div className="mt-7 rounded-3xl border border-[var(--line)] bg-[var(--background)] p-6 text-left">
+            {/* PRIMARY CHECKOUT OPTION (PAYMEGATE) */}
+            <div className="mt-5 rounded-3xl border border-[var(--line)] bg-[var(--background)] p-5 sm:p-6 text-left">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-[rgba(139,207,34,0.15)] px-3 py-1 text-[11px] font-bold text-[var(--accent-strong)]">
                   {primaryProvider.id === 'provider_b' ? (
@@ -231,30 +229,30 @@ export const AntechamberModal = ({
                   )}
                   {primaryProvider.badge}
                 </span>
-                <span className="text-xs font-semibold text-[var(--muted)]">{primaryProvider.chains}</span>
+                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--muted)]">
+                  <Clock size={12} className="text-[var(--accent-strong)]" />
+                  30-min quote lock
+                </span>
               </div>
 
               <h3 className="mt-3 text-lg font-bold text-[var(--foreground)]">
-                Pay via {primaryProvider.name} (Recommended)
+                Pay With {primaryProvider.name}
               </h3>
-              <p className="mt-1 text-xs leading-relaxed text-[var(--muted)]">
-                BIGGER ENERGY is a private digital video experience from the Chad-Kermit universe — confident, playful, mythic, and built for presence, focus, and personal energy.
-              </p>
 
-              <ul className="mt-4 space-y-1.5 text-xs text-[var(--muted)]">
-                <li className="flex items-center gap-2">
-                  <Check size={13} strokeWidth={2.8} className="shrink-0 text-[var(--accent-strong)]" />
-                  <span>Secure access to the full digital video after confirmed payment</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check size={13} strokeWidth={2.8} className="shrink-0 text-[var(--accent-strong)]" />
-                  <span>Private customer access link delivered directly to your inbox</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check size={13} strokeWidth={2.8} className="shrink-0 text-[var(--accent-strong)]" />
-                  <span>Digital delivery only · No physical product or shipping</span>
-                </li>
-              </ul>
+              <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-semibold text-[var(--muted)]">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--surface)] px-3 py-1">
+                  <Check size={12} strokeWidth={2.8} className="text-[var(--accent-strong)]" />
+                  Full Digital Video
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--surface)] px-3 py-1">
+                  <Check size={12} strokeWidth={2.8} className="text-[var(--accent-strong)]" />
+                  Private Email Link
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--surface)] px-3 py-1">
+                  <Check size={12} strokeWidth={2.8} className="text-[var(--accent-strong)]" />
+                  Digital Only · Instant
+                </span>
+              </div>
 
               {primaryProvider.id === 'provider_b' ? (
                 <>
@@ -265,14 +263,17 @@ export const AntechamberModal = ({
                         className="mb-1.5 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--muted)]"
                       >
                         <Mail size={12} className="text-[var(--accent-strong)]" />
-                        <span>Delivery Email (for your private access link)</span>
+                        <span>Delivery Email (Optional)</span>
                       </label>
                       <input
                         id="primary-checkout-email"
                         type="email"
                         placeholder="you@example.com"
                         value={email}
-                        onChange={(e) => onEmailChange(e.target.value)}
+                        onChange={(e) => {
+                          onEmailChange(e.target.value);
+                          if (paymegateError) setPaymegateError(null);
+                        }}
                         disabled={paymegateLoading}
                         className="w-full rounded-2xl border border-[var(--line)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--foreground)] placeholder:text-[var(--muted)]/50 focus:border-[var(--accent)] focus:outline-none"
                       />
@@ -283,22 +284,22 @@ export const AntechamberModal = ({
                     type="button"
                     onClick={handlePaymegateCheckout}
                     disabled={paymegateLoading}
-                    className="mt-5 flex h-[72px] sm:h-[76px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 text-center text-base sm:text-lg font-extrabold tracking-tight text-[var(--accent-ink)] transition-colors duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-60"
+                    className="mt-4 flex h-[68px] sm:h-[74px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-7 text-center text-base sm:text-lg font-extrabold tracking-tight text-[var(--accent-ink)] transition-colors duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {paymegateLoading ? (
                       <>
                         <Loader2 size={20} className="animate-spin" />
-                        <span>Opening {primaryProvider.name}…</span>
+                        <span>Opening Checkout…</span>
                       </>
                     ) : (
                       <>
-                        <span>Open {primaryProvider.name} Checkout (${storefrontContent.product.priceUsd.toFixed(2)})</span>
-                        <ExternalLink size={20} strokeWidth={2.4} />
+                        <span>Pay Card / Crypto · ${storefrontContent.product.priceUsd.toFixed(2)}</span>
+                        <ExternalLink size={19} strokeWidth={2.4} />
                       </>
                     )}
                   </button>
-                  {paymegateError && (
-                    <p className="mt-2.5 text-xs font-medium text-red-400">{paymegateError}</p>
+                  {(paymegateError || emailError) && (
+                    <p className="mt-2.5 text-xs font-medium text-red-400">{paymegateError || emailError}</p>
                   )}
                 </>
               ) : (
@@ -306,115 +307,83 @@ export const AntechamberModal = ({
                   href={primaryProvider.checkoutUrl || storefrontContent.product.paymentUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-5 flex h-[72px] sm:h-[76px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 text-center text-base sm:text-lg font-extrabold tracking-tight text-[var(--accent-ink)] transition-colors duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)]"
+                  className="mt-4 flex h-[68px] sm:h-[74px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-7 text-center text-base sm:text-lg font-extrabold tracking-tight text-[var(--accent-ink)] transition-colors duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)]"
                 >
-                  <span>Open {primaryProvider.name} Checkout (${storefrontContent.product.priceUsd.toFixed(2)})</span>
-                  <ExternalLink size={20} strokeWidth={2.4} />
+                  <span>Pay Direct Crypto · ${storefrontContent.product.priceUsd.toFixed(2)}</span>
+                  <ExternalLink size={19} strokeWidth={2.4} />
                 </a>
               )}
-
-              <p className="mt-3.5 text-[11px] leading-relaxed text-[var(--muted)]/80">
-                Intended for the purchaser only — do not redistribute, repost, or share your access link. Digital entertainment &amp; personal-development experience; not medical, psychological, financial, or professional advice.
-              </p>
             </div>
 
-            {/* SECONDARY / ALTERNATIVE PAYMENT RAILS (If Configured) */}
+            {/* SECONDARY PAYMENT RAIL (BLUNT.CASH BACKUP) */}
             {secondaryProviders.map((sec) => (
-              <div key={sec.id} className="mt-4 rounded-3xl border border-[var(--line)] bg-[var(--background)] p-5 text-left">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[11px] font-bold text-[var(--foreground)]">
-                    <Zap size={13} className="fill-current text-[var(--accent-strong)]" /> {sec.badge}
+              <div key={sec.id} className="mt-3.5 rounded-3xl border border-[var(--line)] bg-[var(--background)] p-4 sm:p-5 text-left">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[var(--foreground)]">
+                    <Zap size={13} className="fill-current text-[var(--accent-strong)]" />
+                    Backup: {sec.name}
                   </span>
-                  <span className="text-xs font-semibold text-[var(--muted)]">{sec.chains}</span>
+                  <span className="text-[11px] font-semibold text-[var(--muted)]">{sec.chains}</span>
                 </div>
-                <h4 className="mt-2 text-base font-bold text-[var(--foreground)]">Alternative: Pay via {sec.name}</h4>
                 {sec.id === 'provider_b' ? (
-                  <>
-                    <button
-                      type="button"
-                      onClick={handlePaymegateCheckout}
-                      disabled={paymegateLoading}
-                      className="mt-4 flex h-[60px] w-full items-center justify-center gap-2.5 rounded-full border border-[var(--line)] bg-[var(--surface)] px-6 text-sm font-bold text-[var(--foreground)] transition-colors duration-200 hover:border-[var(--accent)] hover:text-[var(--accent-strong)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      {paymegateLoading ? (
-                        <>
-                          <Loader2 size={17} className="animate-spin" />
-                          <span>Opening {sec.name}…</span>
-                        </>
-                      ) : (
-                        <>
-                          <span>Open {sec.name} (${storefrontContent.product.priceUsd.toFixed(2)})</span>
-                          <ExternalLink size={17} />
-                        </>
-                      )}
-                    </button>
-                    {paymegateError && (
-                      <p className="mt-2 text-xs font-medium text-red-400">{paymegateError}</p>
+                  <button
+                    type="button"
+                    onClick={handlePaymegateCheckout}
+                    disabled={paymegateLoading}
+                    className="mt-3 flex h-[56px] w-full items-center justify-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface)] px-6 text-sm font-bold text-[var(--foreground)] transition-colors duration-200 hover:border-[var(--accent)] hover:text-[var(--accent-strong)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {paymegateLoading ? (
+                      <>
+                        <Loader2 size={16} className="animate-spin" />
+                        <span>Opening Checkout…</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Pay Card / Crypto · ${storefrontContent.product.priceUsd.toFixed(2)}</span>
+                        <ExternalLink size={16} />
+                      </>
                     )}
-                  </>
+                  </button>
                 ) : (
                   <a
                     href={sec.checkoutUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-4 flex h-[60px] w-full items-center justify-center gap-2.5 rounded-full border border-[var(--line)] bg-[var(--surface)] px-6 text-sm font-bold text-[var(--foreground)] transition-colors duration-200 hover:border-[var(--accent)] hover:text-[var(--accent-strong)] active:scale-[0.98]"
+                    className="mt-3 flex h-[56px] w-full items-center justify-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface)] px-6 text-sm font-bold text-[var(--foreground)] transition-colors duration-200 hover:border-[var(--accent)] hover:text-[var(--accent-strong)] active:scale-[0.98]"
                   >
-                    <span>Open {sec.name} (${storefrontContent.product.priceUsd.toFixed(2)})</span>
-                    <ExternalLink size={17} />
+                    <span>Pay Direct Crypto · ${storefrontContent.product.priceUsd.toFixed(2)}</span>
+                    <ExternalLink size={16} />
                   </a>
                 )}
               </div>
             ))}
 
-            {/* SECONDARY: IN-DRAWER WIDGET (Optional) */}
-            <div className="relative mt-8 text-center">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-[var(--line)]" />
-              </div>
-              <div className="relative flex justify-center text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--muted)]">
-                <span className="bg-[var(--surface-strong)] px-3">Or Pay In This Window</span>
-              </div>
-            </div>
-
-            {onEmailChange && (
-              <div className="mt-6 space-y-2 text-left">
-                <label
-                  htmlFor="customer-delivery-email"
-                  className="block text-[11px] font-bold uppercase tracking-[0.2em] text-[var(--muted)]"
-                >
-                  Your Delivery Email
-                </label>
-                <input
-                  id="customer-delivery-email"
-                  type="email"
-                  placeholder="you@domain.com"
-                  value={email}
-                  onChange={(e) => onEmailChange(e.target.value)}
-                  disabled={isPreparing}
-                  className="w-full rounded-2xl border border-[var(--line)] bg-[var(--background)] px-5 py-4 text-sm text-[var(--foreground)] placeholder:text-[var(--muted)]/40 focus:border-[var(--accent)] focus:outline-none"
-                />
-                {emailError && <p className="text-xs font-medium text-red-400">{emailError}</p>}
-              </div>
-            )}
-
-            <button
-              type="button"
-              onClick={onStartCheckout}
-              disabled={isPreparing}
-              className="mt-4 flex h-[60px] sm:h-[64px] w-full items-center justify-center gap-2.5 rounded-full border border-[var(--line)] bg-[var(--background)] px-8 text-center text-sm sm:text-base font-bold text-[var(--foreground)] transition-all duration-200 hover:border-[var(--accent)] hover:text-[var(--accent-strong)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+            {/* ANTI-CHURN ESCAPE HATCH: CAN'T PAY WITH CRYPTO OR CARD? DM ON INSTAGRAM */}
+            <a
+              href={storefrontContent.product.instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3.5 flex items-center justify-between gap-4 rounded-2xl border border-[var(--line)] bg-[var(--background)] px-4 py-3.5 text-left transition-colors duration-200 hover:border-[var(--accent)]"
             >
-              {isPreparing ? (
-                <>
-                  <Loader2 size={16} className="animate-spin" /> Preparing in-drawer widget…
-                </>
-              ) : (
-                <>
-                  <LockKeyhole size={16} />
-                  <span>Launch In-Drawer Widget</span>
-                  <ArrowRight size={16} strokeWidth={2} />
-                </>
-              )}
-            </button>
+              <div className="flex items-center gap-3">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[var(--surface)] text-[var(--accent-strong)]">
+                  <Instagram size={17} strokeWidth={2} />
+                </span>
+                <div>
+                  <p className="text-xs font-bold text-[var(--foreground)]">
+                    Can&apos;t pay? DM {storefrontContent.product.instagramHandle}
+                  </p>
+                  <p className="text-[11px] text-[var(--muted)]">
+                    Trouble paying with crypto or card? Message us on Instagram for help.
+                  </p>
+                </div>
+              </div>
+              <ExternalLink size={15} className="shrink-0 text-[var(--muted)]" />
+            </a>
+
+            <p className="mt-4 text-center text-[11px] leading-relaxed text-[var(--muted)]/75">
+              Private access for purchaser only — do not share or redistribute. Digital entertainment &amp; personal-development experience; not medical, psychological, financial, or professional advice.
+            </p>
           </>
         )}
 

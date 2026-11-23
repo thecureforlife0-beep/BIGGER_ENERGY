@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Play, Sparkles, Volume2, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Play, Sparkles, Volume2, ArrowRight } from 'lucide-react';
 import { storefrontContent } from '@/lib/course-content';
 
 interface TeaserVideoPlayerProps {
@@ -87,7 +87,7 @@ export function TeaserVideoPlayer({ onUnlockClick }: TeaserVideoPlayerProps) {
                   <Play size={28} fill="currentColor" className="ml-1" />
                 </div>
                 <span className="text-xs font-bold uppercase tracking-[0.18em] text-white/90">
-                  Click To Play Teaser (Free)
+                  Play Free Preview
                 </span>
               </div>
             </div>

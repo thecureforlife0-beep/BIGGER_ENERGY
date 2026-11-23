@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Check, Clock3, LockKeyhole, Play, ShieldCheck, Loader2 } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { Check, Clock3, Instagram, Play, RotateCcw, ShieldCheck, Loader2 } from 'lucide-react';
 import { storefrontContent } from '@/lib/course-content';
 
 interface MediaInfo {
@@ -16,29 +16,33 @@ export function PurchasedExperience({ courseId }: { courseId: string }) {
   const [media, setMedia] = useState<MediaInfo | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [loadingMedia, setLoadingMedia] = useState(true);
+  const [mediaError, setMediaError] = useState<string | null>(null);
+
+  const loadMedia = useCallback(async () => {
+    setLoadingMedia(true);
+    setMediaError(null);
+    try {
+      const res = await fetch(`/api/media/lesson?courseId=${encodeURIComponent(courseId)}`, {
+        cache: 'no-store',
+      });
+      if (!res.ok) {
+        throw new Error('Could not authorize private video stream. Refresh or re-open your access email.');
+      }
+      const data = await res.json();
+      setMedia(data);
+    } catch (err) {
+      console.error('[media] fetch failed', err);
+      setMediaError(
+        err instanceof Error ? err.message : 'Video stream failed to load. Please retry.',
+      );
+    } finally {
+      setLoadingMedia(false);
+    }
+  }, [courseId]);
 
   useEffect(() => {
-    let cancelled = false;
-    async function loadMedia() {
-      try {
-        const res = await fetch(`/api/media/lesson?courseId=${encodeURIComponent(courseId)}`, {
-          cache: 'no-store',
-        });
-        if (res.ok) {
-          const data = await res.json();
-          if (!cancelled) setMedia(data);
-        }
-      } catch (err) {
-        console.error('[media] fetch failed', err);
-      } finally {
-        if (!cancelled) setLoadingMedia(false);
-      }
-    }
     void loadMedia();
-    return () => {
-      cancelled = true;
-    };
-  }, [courseId]);
+  }, [loadMedia]);
 
   if (courseId !== storefrontContent.course.id) {
     return (
@@ -89,7 +93,35 @@ export function PurchasedExperience({ courseId }: { courseId: string }) {
           <div className="flex min-h-[340px] items-center justify-center p-8">
             <Loader2 size={32} className="animate-spin text-[var(--accent)]" />
           </div>
-        ) : isPlaying && media?.playbackUrl ? (
+        ) : mediaError || !media?.playbackUrl ? (
+          <div className="grid min-h-[300px] place-items-center bg-[var(--surface)] p-7 text-center sm:min-h-[400px] sm:p-12">
+            <div className="max-w-[500px]">
+              <h2 className="text-2xl font-semibold tracking-[-0.05em] text-[var(--foreground)]">
+                Stream Needs Retry
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
+                {mediaError || 'Could not load your private video stream. Retry below or message us on Instagram.'}
+              </p>
+              <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  onClick={() => void loadMedia()}
+                  className="inline-flex h-[60px] items-center justify-center gap-2 rounded-full bg-[var(--accent)] px-8 text-sm font-extrabold text-[var(--accent-ink)] transition-colors duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)]"
+                >
+                  <RotateCcw size={16} /> Retry Video Stream
+                </button>
+                <a
+                  href={storefrontContent.product.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-[60px] items-center justify-center gap-2 rounded-full border border-[var(--line)] bg-[var(--background)] px-6 text-sm font-bold text-[var(--foreground)] transition-colors duration-200 hover:border-[var(--accent)] hover:text-[var(--accent-strong)]"
+                >
+                  <Instagram size={16} /> DM {storefrontContent.product.instagramHandle}
+                </a>
+              </div>
+            </div>
+          </div>
+        ) : isPlaying ? (
           <div className="relative aspect-video w-full overflow-hidden bg-black">
             {media.format === 'hls' && media.token ? (
               <iframe

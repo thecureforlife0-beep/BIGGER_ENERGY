@@ -7,6 +7,7 @@ import {
   Check,
   ExternalLink,
   Flame,
+  Instagram,
   LockKeyhole,
   Mail,
   Play,
@@ -129,7 +130,7 @@ export function UnpurchasedHomepage() {
                   className="flex h-[76px] sm:h-[80px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-8 sm:px-10 text-base sm:text-lg font-extrabold tracking-tight text-[var(--accent-ink)] transition-colors duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)]"
                   data-testid="cta-button"
                 >
-                  <span>Start The Method</span>
+                  <span>Unlock Full Video</span>
                   <span className="rounded-full bg-black/10 px-2.5 py-1 text-sm font-black">
                     ${storefrontContent.product.priceUsd.toFixed(2)}
                   </span>
@@ -142,7 +143,7 @@ export function UnpurchasedHomepage() {
                     href="#about-course"
                     className="flex items-center gap-1 text-[var(--foreground)] transition hover:text-[var(--accent-strong)]"
                   >
-                    <span>Watch Free Teaser</span>
+                    <span>Watch Free Preview</span>
                     <Play size={12} fill="currentColor" />
                   </a>
                 </div>
@@ -154,8 +155,18 @@ export function UnpurchasedHomepage() {
                   className="flex items-center justify-center gap-1.5 rounded-full border border-[var(--line)] bg-[var(--surface-strong)]/80 py-2.5 px-4 text-xs font-bold text-[var(--foreground)] transition-colors duration-200 hover:border-[var(--accent)] hover:text-[var(--accent-strong)] active:scale-[0.98]"
                 >
                   <Zap size={14} className="fill-[var(--accent-strong)] text-[var(--accent-strong)]" />
-                  <span>Direct Crypto Backup: Blunt.cash</span>
+                  <span>Direct Crypto (Blunt)</span>
                   <ArrowUpRight size={14} strokeWidth={2.4} />
+                </a>
+
+                <a
+                  href={storefrontContent.product.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-1.5 text-[11px] font-semibold text-[var(--muted)] transition hover:text-[var(--accent-strong)]"
+                >
+                  <Instagram size={12} />
+                  <span>Can&apos;t pay? DM {storefrontContent.product.instagramHandle}</span>
                 </a>
               </div>
             </div>
@@ -360,23 +371,26 @@ export function UnpurchasedHomepage() {
               <div className="space-y-6">
                 <div className="rounded-3xl border border-[var(--line)] bg-[var(--surface-strong)] p-8 shadow-sm">
                   <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[var(--accent-strong)]">
-                    Direct Outreach
+                    Direct Help · Instagram
                   </p>
                   <h4 className="mt-3 text-xl font-bold text-[var(--foreground)]">
-                    Have questions for Joshua?
+                    Questions or Payment Help?
                   </h4>
                   <p className="mt-3 text-sm leading-relaxed text-[var(--muted)]">
-                    Joshua personally replies on Instagram to men executing the protocol and shares verified growth milestones.
+                    Have questions about the method or can&apos;t pay using crypto or card? Message{' '}
+                    <span className="font-semibold text-[var(--foreground)]">{storefrontContent.product.instagramHandle}</span>{' '}
+                    on Instagram for direct help.
                   </p>
 
                   <a
                     href={storefrontContent.creator.socialUrl}
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
                     className="mt-6 flex h-[68px] sm:h-[72px] w-full items-center justify-center gap-3 rounded-full border border-[var(--line)] bg-[var(--surface)] px-8 text-base font-bold text-[var(--foreground)] transition-all duration-200 active:scale-[0.98] hover:bg-[var(--foreground)] hover:text-[var(--background)]"
                   >
-                    <span>Message Joshua on Instagram</span>
-                    <ExternalLink size={18} />
+                    <Instagram size={18} />
+                    <span>DM {storefrontContent.product.instagramHandle}</span>
+                    <ExternalLink size={16} />
                   </a>
                 </div>
               </div>
@@ -447,24 +461,37 @@ export function UnpurchasedHomepage() {
               </p>
             </div>
 
-            <div className="flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row">
-              <button
-                type="button"
-                onClick={openCheckout}
-                className="flex h-[76px] sm:h-[80px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-10 text-base sm:text-lg font-extrabold text-[var(--accent-ink)] transition-colors duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)] sm:w-auto"
-              >
-                <span>Start The Method (${storefrontContent.product.priceUsd.toFixed(2)})</span>
-                <ArrowRight size={20} strokeWidth={2.4} />
-              </button>
+            <div className="flex w-full flex-col items-center gap-3 sm:w-auto">
+              <div className="flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row">
+                <button
+                  type="button"
+                  onClick={openCheckout}
+                  className="flex h-[76px] sm:h-[80px] w-full items-center justify-center gap-3 rounded-full bg-[var(--accent)] px-10 text-base sm:text-lg font-extrabold text-[var(--accent-ink)] transition-colors duration-200 active:scale-[0.98] hover:bg-[var(--accent-strong)] sm:w-auto"
+                >
+                  <span>Unlock Now · ${storefrontContent.product.priceUsd.toFixed(2)}</span>
+                  <ArrowRight size={20} strokeWidth={2.4} />
+                </button>
+
+                <a
+                  href={storefrontContent.product.paymentUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-[76px] sm:h-[80px] w-full items-center justify-center gap-2.5 rounded-full border border-[var(--line)] bg-[var(--surface-strong)] px-8 text-base font-extrabold text-[var(--foreground)] transition-all duration-200 hover:border-[var(--accent)] hover:text-[var(--accent-strong)] active:scale-[0.98] sm:w-auto"
+                >
+                  <Zap size={18} className="fill-[var(--accent-strong)] text-[var(--accent-strong)]" />
+                  <span>Pay Direct Crypto</span>
+                  <ArrowUpRight size={18} strokeWidth={2.4} />
+                </a>
+              </div>
 
               <a
-                href={storefrontContent.product.paymentUrl}
+                href={storefrontContent.product.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex h-[76px] sm:h-[80px] w-full items-center justify-center gap-2.5 rounded-full border border-[var(--line)] bg-[var(--surface-strong)] px-8 text-base font-extrabold text-[var(--foreground)] transition-all duration-200 hover:border-[var(--accent)] hover:text-[var(--accent-strong)] active:scale-[0.98] sm:w-auto"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--muted)] transition hover:text-[var(--accent-strong)]"
               >
-                <Zap size={18} className="fill-[var(--accent-strong)] text-[var(--accent-strong)]" />
-                <span>Direct Blunt.cash ↗</span>
+                <Instagram size={13} />
+                <span>Can&apos;t pay with crypto or card? DM {storefrontContent.product.instagramHandle}</span>
               </a>
             </div>
           </div>

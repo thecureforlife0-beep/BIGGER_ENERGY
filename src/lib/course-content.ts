@@ -6,6 +6,8 @@ export const storefrontContent = {
     reviewsCount: 1302,
     rating: 4.7,
     paymentUrl: 'https://pay.blunt.cash/buy/bigger-energy',
+    instagramHandle: '@bigger_chad',
+    instagramUrl: 'https://www.instagram.com/bigger_chad/',
   },
   course: {
     id: 'eggplant-method-v1',
@@ -94,7 +96,7 @@ export const storefrontContent = {
     disclosure:
       'This personal story and all health, measurement, and outcome statements are transcribed directly from creator-reported records. Results reflect individual anatomy and regimen consistency.',
     portraitUrl: null as string | null,
-    instagramHandle: '@joshuahiett',
-    socialUrl: 'https://instagram.com',
+    instagramHandle: '@bigger_chad',
+    socialUrl: 'https://www.instagram.com/bigger_chad/',
   },
 } as const;

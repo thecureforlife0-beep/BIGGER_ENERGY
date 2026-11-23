@@ -1,4 +1,4 @@
-const CACHE_NAME = 'the-method-shell-v1';
+const CACHE_NAME = 'the-method-shell-v2';
 const OFFLINE_URL = '/offline.html';
 
 self.addEventListener('install', (event) => {

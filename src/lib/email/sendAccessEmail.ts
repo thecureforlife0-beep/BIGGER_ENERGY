@@ -38,7 +38,7 @@ export function buildAccessEmailHtml(accessUrl: string, introText?: string): str
             Open Private Lesson
           </a>
           <p style="margin: 32px 0 0 0; font-size: 12px; color: #888; border-top: 1px solid #eee; padding-top: 16px;">
-            Bookmark this email. This link remains valid for 365 days.
+            Bookmark this email. This link remains valid for 365 days. Need help? DM <a href="${storefrontContent.product.instagramUrl}" style="color: #65a30d; font-weight: 700; text-decoration: none;">${storefrontContent.product.instagramHandle}</a> on Instagram.
           </p>
         </div>
       </div>
@@ -183,7 +183,9 @@ export async function sendAccessEmail({
     throw new Error(`Cannot send access email: no entitlement token found for order ${orderId}`);
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || 'https://biggerenergy.vercel.app')
+    .trim()
+    .replace(/\/+$/, '');
   const accessUrl = `${baseUrl}/access?token=${encodeURIComponent(token)}&courseId=${encodeURIComponent(courseId)}`;
 
   const result = await dispatchEmail({
